@@ -1,0 +1,3 @@
+mpremote
+# PyQt5
+tk
