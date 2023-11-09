@@ -53,6 +53,7 @@ def connect_to_network():
         print('connected')
         status = wlan.ifconfig()
         print('ip = ' + status[0])
+    return status[0]
 
 async def serve_client(reader, writer, limiar=50):
     print("Client connected")
@@ -124,7 +125,7 @@ async def serve_client(reader, writer, limiar=50):
     writer.write(f"""
         <div class="divide-y divide-gray-300/50">
         <div class="space-y-6 py-8 text-base leading-7 text-gray-600">
-          <h1 class="text-lg font-semibold">BitDogLab-IoT</h1>
+          <h1 class="text-lg font-semibold"style="text-align: center;">BitDogLab-IoT</h1>
           <h3 class="text-base font-semibold">Temperatura: {temp}</h3>
           <h3 class="text-base font-semibold">Umidade do ar: {humidity}</h3>
             
@@ -157,7 +158,7 @@ async def serve_client(reader, writer, limiar=50):
 
 async def main():
     print('Connecting to Network...')
-    connect_to_network()
+    ip = connect_to_network()
 
     print('Setting up webserver...')
     asyncio.create_task(asyncio.start_server(serve_client, "0.0.0.0", 80))
@@ -167,7 +168,8 @@ async def main():
         humidity = sensor.relative_humidity
         oled.fill(0)
         oled.text('Temp.: {:.2f}C'.format(temp), 0, 0)
-        oled.text('Umidade: {:.2f}%'.format(humidity), 0, 30)
+        oled.text('Umidade: {:.2f}%'.format(humidity), 0, 20)
+        oled.text(f'{ip}', 0, 55)
         alto_falante.freq(50)
         oled.show()
         print(f"Temp: {temp}")
