@@ -4,10 +4,11 @@ import time
 import ahtx0
 import os
 from ssd1306 import SSD1306_I2C
-
+import neopixel
 
 from machine import Pin, SoftI2C, PWM
 import uasyncio as asyncio
+
 
 led = Pin(12, Pin.OUT)
 alto_falante = PWM(Pin(21))
@@ -19,6 +20,56 @@ oled = SSD1306_I2C(128, 64, i2c_oled)
 # Configuração Sensor AHT10/AHT20
 i2c_sensor = SoftI2C(scl=Pin(3), sda=Pin(2))
 sensor = ahtx0.AHT10(i2c_sensor)
+ #matrix de led
+
+NUM_LEDS = 25
+
+# Inicializar a matriz de NeoPixels no GPIO7
+np = neopixel.NeoPixel(Pin(7), NUM_LEDS)
+
+# 
+LED = {
+    0: 24, 1: 23, 2: 22, 3: 21, 4: 20,
+    5: 15, 6: 16, 7: 17, 8: 18, 9: 19,
+    10: 14, 11: 13, 12: 12, 13: 11, 14: 10,
+    15: 5, 16: 6, 17: 7, 18: 8, 19: 9,
+    20: 4, 21: 3, 22: 2, 23: 1, 24: 0
+}
+
+for i in range(NUM_LEDS):
+        np[LED[i]] = (0, 0, 0)  # Define o LED como branco
+        np.write()
+
+np[LED[0]] = (0, 1, 0)
+np[LED[1]] = (0, 1, 0)
+np[LED[2]] = (0, 1, 0)
+np[LED[3]] = (0, 1, 0)
+np[LED[4]] = (0, 1, 0)
+
+np[LED[5]] = (0, 0, 1)
+np[LED[6]] = (0, 0, 1)
+np[LED[7]] = (0, 0, 1)
+np[LED[8]] = (0, 0, 1)
+np[LED[9]] = (0, 0, 1)
+
+np[LED[10]] = (1, 0, 0)
+np[LED[11]] = (1, 0, 0)
+np[LED[12]] = (1, 0, 0)
+np[LED[13]] = (1, 0, 0)
+np[LED[14]] = (1, 0, 0)
+
+np[LED[15]] = (0, 1, 0)
+np[LED[16]] = (0, 1, 0)
+np[LED[17]] = (0, 1, 0)
+np[LED[18]] = (0, 1, 0)
+np[LED[19]] = (0, 1, 0)
+
+np[LED[20]] = (0, 0, 1)
+np[LED[21]] = (0, 0, 1)
+np[LED[22]] = (0, 0, 1)
+np[LED[23]] = (0, 0, 1)
+np[LED[24]] = (0, 0, 1)
+np.write()
 
 ssid = 'Pedro'
 password = '12345678'
@@ -83,9 +134,18 @@ async def serve_client(reader, writer, limiar=50):
             led.value(1)
             alto_falante.duty_u16(200)
             alerta_disparado = "Alerta disparado"
+            for i in range(NUM_LEDS):
+                np[LED[i]] = (255, 0, 0)  # Define o LED como branco
+                np.write()
         else:
             led.value(0)
             alto_falante.duty_u16(0)
+            for i in range(NUM_LEDS):
+                np[LED[i]] = (0, 0, 0)  # Define o LED como branco
+                np.write()
+        
+
+            
         
             
     
