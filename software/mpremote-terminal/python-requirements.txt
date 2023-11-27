@@ -1,4 +1,2 @@
-mpremote
+pyserial
 PyQt5
-subprocess
-tk
