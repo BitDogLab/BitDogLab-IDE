@@ -37,7 +37,8 @@ class State:
 COMMANDS = {
     "connect": do_connect,
     "disconnect": do_disconnect,
-    "eval": do_eval
+    "eval": do_eval,
+    "exec": do_exec
 }
 
 state = State()

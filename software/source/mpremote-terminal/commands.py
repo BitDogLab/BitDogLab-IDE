@@ -49,3 +49,13 @@ def do_eval(state, *args):
         )
     else:
         state.appendToBuf(f"not connected")
+
+def do_exec(state, *args):
+    buf = f"{' '.join(args)}\r\n"
+    print(buf)
+    if state.connected:
+        state.serial.write(
+            buf.encode()
+        )
+    else:
+        state.appendToBuf(f"not connected")
