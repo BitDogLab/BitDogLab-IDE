@@ -23,13 +23,13 @@ python3 -m venv .venv
 ### For bash users:
 
 ```console
-source .venv/bin/activate
+. .venv/bin/activate
 ```
 
 ### For fish users:
 
 ```console
-source .venv/bin/activate.fish
+. .venv/bin/activate.fish
 ```
 
 ## Then install the required packages:
@@ -43,11 +43,11 @@ source .venv/bin/activate.fish
 Every script must be run as a python module, from this exact folder. This is done by running:
 
 ```console
-.venv/bin/python3 -m source.<module_name>.<script_name>
+.venv/bin/python3 -m src.<module_name>.<script_name>
 ```
 
-For example, to run the `ble-streamer` script, one should run:
+For example, to run the `RGB-control/main.py` script, one should run:
 
 ```console
-.venv/bin/python3 -m source.ble-streamer.one-led.ble-streamer
+.venv/bin/python3 -m src.RGB-control.main
 ```
