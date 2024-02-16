@@ -43,11 +43,11 @@ python3 -m venv .venv
 Every script must be run as a python module, from this exact folder. This is done by running:
 
 ```console
-.venv/bin/python3 -m src.<module_name>.<script_name>
+.venv/bin/python3 -m src.interface.<module_name>.<script_name>
 ```
 
 For example, to run the `RGB-control/main.py` script, one should run:
 
 ```console
-.venv/bin/python3 -m src.RGB-control.main
+.venv/bin/python3 -m src.interface.RGB-control.main
 ```
