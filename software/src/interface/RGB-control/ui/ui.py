@@ -8,7 +8,7 @@ class BaseWindow(QMainWindow):
     super(BaseWindow, self).__init__()
     
     # Load .ui file.
-    uic.loadUi("src/RGB-control/ui/main.ui", self)
+    uic.loadUi("./src/interface/RGB-control/ui/main.ui", self)
 
     # Set color widget background to black initially
     self.colorWidget.setStyleSheet("QWidget#colorWidget { background-color: #000000 }")

@@ -18,17 +18,17 @@ class Window(BaseWindow):
 
     # Create checkbox, col select and row select object lists.
     self.np_matrix_select = [
-      [self.checkBox_m11, self.checkBox_m12, self.checkBox_m13, self.checkBox_m14, self.checkBox_m15],
-      [self.checkBox_m21, self.checkBox_m22, self.checkBox_m23, self.checkBox_m24, self.checkBox_m25],
-      [self.checkBox_m31, self.checkBox_m32, self.checkBox_m33, self.checkBox_m34, self.checkBox_m35],
-      [self.checkBox_m41, self.checkBox_m42, self.checkBox_m43, self.checkBox_m44, self.checkBox_m45],
-      [self.checkBox_m51, self.checkBox_m52, self.checkBox_m53, self.checkBox_m54, self.checkBox_m55],
+      [self.npControl.checkBox_m11, self.npControl.checkBox_m12, self.npControl.checkBox_m13, self.npControl.checkBox_m14, self.npControl.checkBox_m15],
+      [self.npControl.checkBox_m21, self.npControl.checkBox_m22, self.npControl.checkBox_m23, self.npControl.checkBox_m24, self.npControl.checkBox_m25],
+      [self.npControl.checkBox_m31, self.npControl.checkBox_m32, self.npControl.checkBox_m33, self.npControl.checkBox_m34, self.npControl.checkBox_m35],
+      [self.npControl.checkBox_m41, self.npControl.checkBox_m42, self.npControl.checkBox_m43, self.npControl.checkBox_m44, self.npControl.checkBox_m45],
+      [self.npControl.checkBox_m51, self.npControl.checkBox_m52, self.npControl.checkBox_m53, self.npControl.checkBox_m54, self.npControl.checkBox_m55],
     ]
     self.pushButton_selCols = [
-      self.pushButton_selCol1, self.pushButton_selCol2, self.pushButton_selCol3, self.pushButton_selCol4, self.pushButton_selCol5
+      self.npControl.pushButton_selCol1, self.npControl.pushButton_selCol2, self.npControl.pushButton_selCol3, self.npControl.pushButton_selCol4, self.npControl.pushButton_selCol5
     ]
     self.pushButton_selRows = [
-      self.pushButton_selRow1, self.pushButton_selRow2, self.pushButton_selRow3, self.pushButton_selRow4, self.pushButton_selRow5
+      self.npControl.pushButton_selRow1, self.npControl.pushButton_selRow2, self.npControl.pushButton_selRow3, self.npControl.pushButton_selRow4, self.npControl.pushButton_selRow5
     ]
     self.pushButton_selCols_lambdas = [
       lambda: self.selectColumn(0), lambda: self.selectColumn(1), lambda: self.selectColumn(2), lambda: self.selectColumn(3), lambda: self.selectColumn(4)
@@ -40,9 +40,9 @@ class Window(BaseWindow):
     for i in range(5):
       self.pushButton_selCols[i].clicked.connect(self.pushButton_selCols_lambdas[i])
       self.pushButton_selRows[i].clicked.connect(self.pushButton_selRows_lambdas[i])
-    self.pushButton_selAll.clicked.connect(self.selectAll)
-    self.pushButton_clearMatrix.clicked.connect(self.clearMatrix)
-    self.pushButton_resetMatrix.clicked.connect(self.resetMatrix)
+    self.npControl.pushButton_selAll.clicked.connect(self.selectAll)
+    self.npControl.pushButton_clearMatrix.clicked.connect(self.clearMatrix)
+    self.npControl.pushButton_resetMatrix.clicked.connect(self.resetMatrix)
 
   def selectColumn(self, col):
     for i in range(5):
@@ -66,7 +66,7 @@ class Window(BaseWindow):
     self.ser.write("resetLEDs()\r\n".encode())
 
   def sendColor(self):
-    r, g, b = self.horizontalSlider_R.value(), self.horizontalSlider_G.value(), self.horizontalSlider_B.value()
+    r, g, b = self.npControl.widget_RGBselect.getColor()
     for i in range(5):
       for j in range(5):
         if self.np_matrix_select[i][j].isChecked():
@@ -79,43 +79,22 @@ class Window(BaseWindow):
       if p.vid is not None and p.pid is not None:
         self.ser = serial.Serial(port=p.device, baudrate=115200)
         assert(self.ser is not None)
-        self.ser.write("""\x03
-from machine import Pin\r
-import neopixel\r
-np = neopixel.NeoPixel(Pin(7), 25)\r
-np_queue = []\r
-\r
-def resetLEDs():\r
-global np, np_queue\r
-for i in range(25):\r
-np[i] = (0, 0, 0)\r
-\bnp.write()\r
-np_queue = []\r
-\b\r
-def setLED(pos: tuple[int, int], color: tuple[int, int, int]):\r
-global np_queue\r
-y = pos[1]\r
-x = (4 - pos[0]) if y%2==1 else pos[0]\r
-np_queue.append((5*y + x, color))\r
-\b\r
-def updateLEDs():\r
-global np, np_queue\r
-while len(np_queue) > 0:\r
-i, color = np_queue.pop(0)\r
-np[i] = color\r
-\bnp.write()\r
-\b\r
-""".encode())
+        
+        # Load setup.py with exec function via serial.
+        with open('./src/interface/NeoPixel-control/commands/setup.py', 'r') as f:
+          command = '\x03exec(\'\'\'' + f.read().replace('\n', '\n\r') + '\'\'\')\n\r'
+          self.ser.write(command.encode())
+        
         self.label_statusIsConnected.setText("Conectado")
         self.pushButton_connect.setText("Desconectar")
         return
 
   def disconnect(self):
-    self.ser.write("""resetLEDs()\r
-from machine import reset\r
-reset()\r
-""".encode()
-    )
+    # Load reset.py with exec function via serial.
+    with open('./src/interface/NeoPixel-control/commands/reset.py', 'r') as f:
+      command = '\x03exec(\'\'\'' + f.read().replace('\n', '\n\r') + '\'\'\')\n\r'
+      self.ser.write(command.encode())
+    
     self.ser.close()
     self.ser = None
     self.label_statusIsConnected.setText("Desconectado")

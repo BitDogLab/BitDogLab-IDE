@@ -3,25 +3,16 @@ from PyQt5.QtWidgets import *
 from PyQt5 import QtCore, uic
 from PyQt5.QtGui import *
 
+class NeoPixelControl(QWidget):
+  def __init__(self, *args, **kwargs):
+    super(NeoPixelControl, self).__init__(*args, **kwargs)
+    uic.loadUi("./src/interface/NeoPixel-control/ui/neopixel_control.ui", self)
+    self.widget_RGBselect.setColorMaximum(255)
+
 class BaseWindow(QMainWindow):
   def __init__(self):
     super(BaseWindow, self).__init__()
-
-    # Load .ui file
-    uic.loadUi("src/NeoPixel-control/ui/main.ui", self)
-
-      # RGB selection widget!
-    # Set color widget background to black initially
-    self.widget_RGB.setStyleSheet("QWidget#widget_RGB { background-color: #000000 }")
-
-    # Connect background color changes
-    self.horizontalSlider_R.valueChanged.connect(self.handleColorChange)
-    self.horizontalSlider_G.valueChanged.connect(self.handleColorChange)
-    self.horizontalSlider_B.valueChanged.connect(self.handleColorChange)
-  
-  def handleColorChange(self):
-    r, g, b = self.horizontalSlider_R.value(), self.horizontalSlider_G.value(), self.horizontalSlider_B.value()
-    self.widget_RGB.setStyleSheet(f"QWidget#widget_RGB {{ background-color: rgb({r}, {g}, {b}) }}")
+    uic.loadUi("./src/interface/NeoPixel-control/ui/main.ui", self)
 
 if __name__=="__main__":
   app = QApplication(sys.argv)

@@ -8,7 +8,7 @@ class BaseWindow(QMainWindow):
     super(BaseWindow, self).__init__()
 
     # Load .ui file
-    uic.loadUi("src/Buzzer-control/ui/main.ui", self)
+    uic.loadUi("./src/interface/Buzzer-control/ui/main.ui", self)
 
     # Setup button appearances
     WHITES_STYLESHEET = "QPushButton { padding-top: 100% 0; }"

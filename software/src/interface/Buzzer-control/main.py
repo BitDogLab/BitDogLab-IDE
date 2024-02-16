@@ -79,25 +79,22 @@ class Window(BaseWindow):
       if p.vid is not None and p.pid is not None:
         self.ser = serial.Serial(port=p.device, baudrate=115200)
         assert(self.ser is not None)
-        self.ser.write("""\x03
-from machine import Pin, PWM\r
-buzzerA_pin = Pin(4, Pin.OUT)\r
-buzzerA_pwm = PWM(buzzerA_pin)\r
-buzzerA_pwm.duty_u16(0)\r
-buzzerB_pin = Pin(21, Pin.OUT)\r
-buzzerB_pwm = PWM(buzzerB_pin)\r
-buzzerB_pwm.duty_u16(0)\r
-""".encode())
+        
+        # Load setup.py with exec function via serial.
+        with open('./src/interface/Buzzer-control/commands/setup.py', 'r') as f:
+          command = '\x03exec(\'\'\'' + f.read().replace('\n', '\n\r') + '\'\'\')\n\r'
+          self.ser.write(command.encode())
+
         self.label_statusIsConnect.setText("Status: Conectado")
         self.pushButton_connect.setText("Desconectar")
         return
 
   def disconnect(self):
-    self.ser.write(
-      """from machine import reset\r
-reset()\r
-""".encode()
-    )
+    # Load reset.py with exec function via serial.
+    with open('./src/interface/Buzzer-control/commands/reset.py', 'r') as f:
+      command = '\x03exec(\'\'\'' + f.read().replace('\n', '\n\r') + '\'\'\')\n\r'
+      self.ser.write(command.encode())
+
     self.ser.close()
     self.ser = None
     self.label_statusIsConnect.setText("Status: Desconectado")

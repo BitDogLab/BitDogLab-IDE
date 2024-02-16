@@ -21,34 +21,22 @@ class Window(BaseWindow):
       if p.vid is not None and p.pid is not None:
         self.ser = serial.Serial(port=p.device, baudrate=115200)
         assert(self.ser is not None)
-        self.ser.write("""\x03
-from machine import Pin, PWM\r
-pinR = Pin(12)\r
-pinG = Pin(11)\r
-pinB = Pin(13)\r
-pwmR = PWM(pinR)\r
-pwmG = PWM(pinG)\r
-pwmB = PWM(pinB)\r
-pwmR.freq(500)\r
-pwmG.freq(500)\r
-pwmB.freq(500)\r
-pwmR.duty_u16(0)\r
-pwmG.duty_u16(0)\r
-pwmB.duty_u16(0)\r
-""".encode())
+        
+        # Load setup.py with exec function via serial.
+        with open('./src/interface/RGB-control/commands/setup.py', 'r') as f:
+          command = '\x03exec(\'\'\'' + f.read().replace('\n', '\n\r') + '\'\'\')\n\r'
+          self.ser.write(command.encode())
+        
         self.label_statusIsConnect.setText("Conectado")
         self.pushButton_connect.setText("Desconectar")
         return
 
   def disconnect(self):
-    self.ser.write(
-      """pwmR.duty_u16(0)\r
-pwmG.duty_u16(0)\r
-pwmB.duty_u16(0)\r
-from machine import reset\r
-reset()\r
-""".encode()
-    )
+    # Load reset.py with exec function via serial.
+    with open('./src/interface/RGB-control/commands/reset.py', 'r') as f:
+      command = '\x03exec(\'\'\'' + f.read().replace('\n', '\n\r') + '\'\'\')\n\r'
+      self.ser.write(command.encode())
+    
     self.ser.close()
     self.ser = None
     self.label_statusIsConnect.setText("Desconectado")
@@ -59,12 +47,8 @@ reset()\r
       QMessageBox.critical(self, "Error! Port closed!", "Can't send color! Port is closed!")
       return
     r, g, b = self.hSlider_R.value(), self.hSlider_G.value(), self.hSlider_B.value()
-    self.ser.write(
-      f"""pwmR.duty_u16({r})\r
-pwmG.duty_u16({g})\r
-pwmB.duty_u16({b})\r
-""".encode()
-    )
+    command = f'setColor({r}, {g}, {b})\r'
+    self.ser.write(command.encode())
 
   def closeEvent(self, event):
     if self.ser is not None:
