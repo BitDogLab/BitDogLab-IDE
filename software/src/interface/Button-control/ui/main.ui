@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>470</width>
+    <height>460</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QFrame" name="btnA_frame">
+   <widget class="QFrame" name="buttonA_frame">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -29,47 +29,14 @@
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QComboBox" name="btnA_funcSelect">
+    <widget class="ButtonOptions" name="buttonA" native="true">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>30</y>
-       <width>131</width>
-       <height>24</height>
+       <x>0</x>
+       <y>0</y>
+       <width>221</width>
+       <height>341</height>
       </rect>
-     </property>
-     <item>
-      <property name="text">
-       <string>Matriz de LEDS</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>LED RGB</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Buzzer A</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Buzzer B</string>
-      </property>
-     </item>
-    </widget>
-    <widget class="QLabel" name="btnA_funcLabel">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>10</y>
-       <width>58</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Função:</string>
      </property>
     </widget>
    </widget>
@@ -99,19 +66,53 @@
      <string>Status: Desconectado</string>
     </property>
    </widget>
+   <widget class="QFrame" name="buttonB_frame">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>30</y>
+      <width>221</width>
+      <height>341</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="ButtonOptions" name="buttonB" native="true">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>221</width>
+       <height>341</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>470</width>
      <height>22</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ButtonOptions</class>
+   <extends>QWidget</extends>
+   <header>src/interface/Button-control/ui/ui</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

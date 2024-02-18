@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>221</width>
+    <height>281</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QComboBox" name="drawingSelect">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>250</y>
+     <width>201</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>Coração</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Coração pequeno</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Sorriso</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Triste</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>X</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>X pequeno</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Girafa</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QLabel" name="drawingLabel">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>230</y>
+     <width>58</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Desenho:</string>
+   </property>
+  </widget>
+  <widget class="RGBSelect" name="RGBSelect" native="true">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>10</y>
+     <width>221</width>
+     <height>191</height>
+    </rect>
+   </property>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>RGBSelect</class>
+   <extends>QWidget</extends>
+   <header>src/utils/RGB-select/rgbselect</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

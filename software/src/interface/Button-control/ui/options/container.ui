@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>221</width>
+    <height>341</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QStackedWidget" name="options">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>60</y>
+     <width>221</width>
+     <height>281</height>
+    </rect>
+   </property>
+   <property name="currentIndex">
+    <number>0</number>
+   </property>
+   <widget class="NeoPixelPresets" name="page_neopixel_presets"/>
+   <widget class="RGBLED" name="page_rgbled"/>
+   <widget class="Buzzer" name="page_buzzerA"/>
+   <widget class="Buzzer" name="page_buzzerB"/>
+  </widget>
+  <widget class="QLabel" name="funcLabel">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>58</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Função:</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="funcSelect">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>30</y>
+     <width>101</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>NeoPixel</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>LED RGB</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Buzzer A</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Buzzer B</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QLabel" name="modeLabel">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>10</y>
+     <width>58</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Modo:</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="comboBox">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>30</y>
+     <width>91</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>Apertar</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Segurar</string>
+    </property>
+   </item>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>NeoPixelPresets</class>
+   <extends>QWidget</extends>
+   <header>src/interface/Button-control/ui/ui</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>RGBLED</class>
+   <extends>QWidget</extends>
+   <header>src/interface/Button-control/ui/ui</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Buzzer</class>
+   <extends>QWidget</extends>
+   <header>src/interface/Button-control/ui/ui</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>funcSelect</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>options</receiver>
+   <slot>setCurrentIndex(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>66</x>
+     <y>49</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>121</x>
+     <y>77</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
