@@ -46,7 +46,7 @@ class Window(BaseWindow):
     if self.ser is None:
       QMessageBox.critical(self, "Error! Port closed!", "Can't send color! Port is closed!")
       return
-    r, g, b = self.hSlider_R.value(), self.hSlider_G.value(), self.hSlider_B.value()
+    r, g, b = self.RGBselect.getColor()
     command = f'setColor({r}, {g}, {b})\r'
     self.ser.write(command.encode())
 

@@ -18,22 +18,30 @@ class RGBSelect(QWidget):
 
     # Define maximum color value. Default is 255.
     self.maximum = 255
-    
-    # Testing custom limits
+    self.ratio = 1.0
+      # Testing custom limits
     # self.maximum = 100
     # self.setLimits(self.maximum)
+
+    self.clearColorButton.clicked.connect(lambda: self.setColor((0, 0, 0)))
   
   def handleColorChange(self):
     r, g, b = self.horizontalSlider_R.value(), self.horizontalSlider_G.value(), self.horizontalSlider_B.value()
-    r, g, b = r*255/self.maximum, g*255/self.maximum, b*255/self.maximum # Interpolates to show correct color in widget
+    r, g, b = r*self.ratio, g*self.ratio, b*self.ratio # Interpolates to show correct color in widget
     self.widget_RGB.setStyleSheet(f"QWidget#widget_RGB {{ background-color: rgb({int(r)}, {int(g)}, {int(b)}) }}")
   
   def getColor(self):
     r, g, b = self.horizontalSlider_R.value(), self.horizontalSlider_G.value(), self.horizontalSlider_B.value()
     return (r, g, b)
+
+  def setColor(self, rgb: tuple[int, int, int]):
+    self.horizontalSlider_R.setValue(max(0, min(rgb[0], self.maximum)))
+    self.horizontalSlider_G.setValue(max(0, min(rgb[1], self.maximum)))
+    self.horizontalSlider_B.setValue(max(0, min(rgb[2], self.maximum)))
   
   def setColorMaximum(self, max_color_value: int):
     self.maximum = max_color_value
+    self.ratio = 255/self.maximum
     self.horizontalSlider_R.setMaximum(self.maximum)
     self.horizontalSlider_G.setMaximum(self.maximum)
     self.horizontalSlider_B.setMaximum(self.maximum)

@@ -18,7 +18,7 @@
     <rect>
      <x>10</x>
      <y>110</y>
-     <width>201</width>
+     <width>111</width>
      <height>71</height>
     </rect>
    </property>
@@ -156,6 +156,50 @@
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="clearColorButton">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>110</y>
+     <width>81</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Faz a cor selecionada voltar para preto (ou seja, (0, 0, 0))</string>
+   </property>
+   <property name="statusTip">
+    <string/>
+   </property>
+   <property name="whatsThis">
+    <string/>
+   </property>
+   <property name="text">
+    <string>Limpar cor</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="sendColorButton">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>150</y>
+     <width>81</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Faz a cor selecionada voltar para preto (ou seja, (0, 0, 0))</string>
+   </property>
+   <property name="statusTip">
+    <string/>
+   </property>
+   <property name="whatsThis">
+    <string/>
+   </property>
+   <property name="text">
+    <string>Enviar cor</string>
    </property>
   </widget>
  </widget>
