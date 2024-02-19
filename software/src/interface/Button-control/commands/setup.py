@@ -1,4 +1,8 @@
+import gc
 from machine import Pin, PWM
+
+gc.disable()
+gc.collect()
 
   # Seção 1: Preparação do NeoPixel
 import neopixel
@@ -84,6 +88,9 @@ class NeoPixelDesenhos:
 NeoPixelDesenhos.apaga()
 
   # Fim da seção 1.
+
+gc.collect()
+
   # Seção 2: Preparação do LED RGB
 PWM_ledR = PWM(Pin(12))
 PWM_ledG = PWM(Pin(11))
@@ -125,6 +132,9 @@ class LedRGB:
 LedRGB.desligar()
 
   # Fim da seção 2.
+
+gc.collect()
+
   # Seção 3: Preparação dos buzzers A e B
 PWM_buzzerA = PWM(Pin(4, Pin.OUT))
 PWM_buzzerA.duty_u16(0)
@@ -136,6 +146,8 @@ PWM_buzzerB.freq(440)
 
 class Buzzer:
   BUZZERS = [PWM_buzzerA, PWM_buzzerB]
+  VOLUMES = [0, 0]
+
   @classmethod
   def ligar(self, id: int):
     self.BUZZERS[id].duty_u16(self.VOLUMES[id])
@@ -143,14 +155,12 @@ class Buzzer:
   @classmethod
   def desligar(self, id: int):
     self.BUZZERS[id].duty_u16(0)
-
-  @classmethod
-  def trocar(self, id: int):
-    if self.BUZZERS[id].duty_u16():
-      self.desligar(id)
-    else:
-      self.ligar(id)
   
+  @classmethod
+  def atualizar(self, id: int):
+    if self.BUZZERS[id].duty_u16() > 0:
+      self.BUZZERS[id].duty_u16(self.VOLUMES[id])
+
   @classmethod
   def definirNota(self, id: int, tone: int):
     self.BUZZERS[id].freq(tone)
@@ -159,11 +169,17 @@ Buzzer.desligar(0)
 Buzzer.desligar(1)
 
   # Fim da seção 3.
+
+gc.collect()
+
   # Seção 4: Preparação do display OLED.
 
 # NÃO IMPLEMENTADO
 
   # Fim da seção 4.
+
+gc.collect()
+
   # Seção 5: Preparação dos botões.
 
 buttonA_pin = Pin(5, Pin.IN, Pin.PULL_UP)
@@ -172,5 +188,45 @@ buttonB_pin = Pin(6, Pin.IN, Pin.PULL_UP)
 # Preparação das funções para interrupção.
 
 class ButtonHandler:
-  BUTTONS_IRQ = [lambda: None, lambda: None]
+  BUTTONS_FALLING_IRQ = [lambda: None, lambda: None] # When button is pressed.
+  BUTTONS_RISING_IRQ = [lambda: None, lambda: None] # When button is released.
   BUTTONS_MODE = [0, 0] # 0 for toggle on press, 1 for on while holding
+  BUTTONS_STATE = [False, False] # Used on mode 0 (toggle on press). Is True when button is "toggled".
+
+  @classmethod
+  def buttonA_irq(self, pin):
+    flags = pin.irq().flags()
+    is_falling = flags & Pin.IRQ_FALLING
+    is_rising = flags & Pin.IRQ_RISING
+    if is_falling and self.BUTTONS_MODE[0] == 0:
+      if self.BUTTONS_STATE[0]:
+        self.BUTTONS_RISING_IRQ[0]()
+      else:
+        self.BUTTONS_FALLING_IRQ[0]()
+      self.BUTTONS_STATE[0] = not self.BUTTONS_STATE[0]
+    elif is_falling and self.BUTTONS_MODE[0] == 1:
+      self.BUTTONS_FALLING_IRQ[0]()
+    elif is_rising and self.BUTTONS_MODE[0] == 1:
+      self.BUTTONS_RISING_IRQ[0]()
+
+  @classmethod
+  def buttonB_irq(self, pin):
+    flags = pin.irq().flags()
+    is_falling = flags & Pin.IRQ_FALLING
+    is_rising = flags & Pin.IRQ_RISING
+    if is_falling and self.BUTTONS_MODE[1] == 0:
+      if self.BUTTONS_STATE[1]:
+        self.BUTTONS_RISING_IRQ[1]()
+      else:
+        self.BUTTONS_FALLING_IRQ[1]()
+      self.BUTTONS_STATE[1] = not self.BUTTONS_STATE[1]
+    elif is_falling and self.BUTTONS_MODE[1] == 1:
+      self.BUTTONS_FALLING_IRQ[1]()
+    elif is_rising and self.BUTTONS_MODE[1] == 1:
+      self.BUTTONS_RISING_IRQ[1]()
+
+buttonA_pin.irq(trigger=(Pin.IRQ_FALLING | Pin.IRQ_RISING), handler=ButtonHandler.buttonA_irq)
+buttonB_pin.irq(trigger=(Pin.IRQ_FALLING | Pin.IRQ_RISING), handler=ButtonHandler.buttonB_irq)
+
+gc.collect()
+gc.enable()

@@ -2,7 +2,7 @@
 NeoPixelDesenhos.apaga()
 
 # Desligar LED RGB.
-LedRGB.definirCor(0, 0, 0)
+LedRGB.desligar()
 
 # Desligar buzzers.
 Buzzer.desligar(0)

@@ -24,26 +24,54 @@ class Window(BaseWindow):
     # Repeat setup steps for both buttons
     self.buttonA.funcSelect.setCurrentIndex(self.indices[0])
     self.buttonB.funcSelect.setCurrentIndex(self.indices[1])
+    self.buttonA.modeSelect.currentIndexChanged.connect(lambda: self.updateButtonMode(0))
+    self.buttonB.modeSelect.currentIndexChanged.connect(lambda: self.updateButtonMode(1))
 
     # Setting up NeoPixel widget
-    self.buttonA.options.widget(0).RGBSelect.sendColorButton.clicked.connect(self.sendColorNP)
+    self.buttonA.options.widget(0).RGBSelect.sendColorButton.setText("Enviar")
+    self.buttonA.options.widget(0).RGBSelect.sendColorButton.clicked.connect(self.sendNeoPixel)
+    self.buttonA.options.widget(0).drawingSelect.currentIndexChanged.connect(self.sendNeoPixel)
+    self.buttonB.options.widget(0).RGBSelect.sendColorButton.setText("Enviar")
+    self.buttonB.options.widget(0).RGBSelect.sendColorButton.clicked.connect(self.sendNeoPixel)
+    self.buttonB.options.widget(0).drawingSelect.currentIndexChanged.connect(self.sendNeoPixel)
 
     # Setting up RGB LED widget
     self.buttonA.options.widget(1).RGBSelect.sendColorButton.clicked.connect(self.sendColorLED)
+    self.buttonB.options.widget(1).RGBSelect.sendColorButton.clicked.connect(self.sendColorLED)
 
     # Setting up Buzzer widgets
     self.buttonA.options.widget(2).setID(0)
     self.buttonA.options.widget(2).toneSelect.currentIndexChanged.connect(lambda: self.buttonA.options.widget(2).freqShowLabel.setText(f" {self.buttonA.options.widget(2).getFrequency()}Hz"))
     self.buttonA.options.widget(2).pitchSelect.valueChanged.connect(lambda: self.buttonA.options.widget(2).freqShowLabel.setText(f" {self.buttonA.options.widget(2).getFrequency()}Hz"))
-    self.buttonA.options.widget(2).sendButton.clicked.connect(lambda: self.sendFrequency(2))
+    self.buttonA.options.widget(2).sendButton.clicked.connect(lambda: self.sendBuzzerFrequency(2))
     self.buttonA.options.widget(3).setID(1)
     self.buttonA.options.widget(3).toneSelect.currentIndexChanged.connect(lambda: self.buttonA.options.widget(3).freqShowLabel.setText(f" {self.buttonA.options.widget(3).getFrequency()}Hz"))
     self.buttonA.options.widget(3).pitchSelect.valueChanged.connect(lambda: self.buttonA.options.widget(3).freqShowLabel.setText(f" {self.buttonA.options.widget(3).getFrequency()}Hz"))
-    self.buttonA.options.widget(3).sendButton.clicked.connect(lambda: self.sendFrequency(3))
+    self.buttonA.options.widget(3).sendButton.clicked.connect(lambda: self.sendBuzzerFrequency(3))
+
+    self.buttonB.options.widget(2).setID(0)
+    self.buttonB.options.widget(2).toneSelect.currentIndexChanged.connect(lambda: self.buttonB.options.widget(2).freqShowLabel.setText(f" {self.buttonB.options.widget(2).getFrequency()}Hz"))
+    self.buttonB.options.widget(2).pitchSelect.valueChanged.connect(lambda: self.buttonB.options.widget(2).freqShowLabel.setText(f" {self.buttonB.options.widget(2).getFrequency()}Hz"))
+    self.buttonB.options.widget(2).sendButton.clicked.connect(lambda: self.sendBuzzerFrequency(2))
+    self.buttonB.options.widget(3).setID(1)
+    self.buttonB.options.widget(3).toneSelect.currentIndexChanged.connect(lambda: self.buttonB.options.widget(3).freqShowLabel.setText(f" {self.buttonB.options.widget(3).getFrequency()}Hz"))
+    self.buttonB.options.widget(3).pitchSelect.valueChanged.connect(lambda: self.buttonB.options.widget(3).freqShowLabel.setText(f" {self.buttonB.options.widget(3).getFrequency()}Hz"))
+    self.buttonB.options.widget(3).sendButton.clicked.connect(lambda: self.sendBuzzerFrequency(3))
     
     # Lambdas are set separately to avoid any issues.
     self.buttonA.funcSelect.currentIndexChanged.connect(lambda: self.handleFuncChange(0))
     self.buttonB.funcSelect.currentIndexChanged.connect(lambda: self.handleFuncChange(1))
+
+  def updateButtonMode(self, buttonid: int):
+    if self.ser is None:
+      return
+    mode = self.buttons[buttonid].modeSelect.currentIndex()
+    command = ("exec('''" + 
+      f"ButtonHandler.BUTTONS_MODE[{buttonid}] = {mode}\n\r" + 
+      f"ButtonHandler.BUTTONS_STATE[{buttonid}] = False\n\r" + 
+      "''')\n\r"
+    )
+    self.ser.write(command.encode())
 
   def handleFuncChange(self, buttonid: int):
     # Check for state variable.
@@ -78,35 +106,91 @@ class Window(BaseWindow):
     # Update state variable.
     self.STATE__INDEX_CHANGING = False
 
-  def sendColorNP(self):
+    # Update Pico interrupts if serial port is open.
+    if self.ser is not None:
+      self.updateInterrupts()
+
+  def sendNeoPixel(self):
     if self.ser is None:
-      pass
-    else:
-      rgb = self.buttons[
-        self.indices.index(0)
-      ].options.widget(0).RGBSelect.getColor()
-      command = f"NeoPixelDesenhos.COLOR = {rgb}\n\r" + "NeoPixelDesenhos.apaga()\n\r"
-      self.ser.write(command.encode())
+      return
+    buttonid = self.indices.index(0)
+    rgb = self.buttons[buttonid].options.widget(0).RGBSelect.getColor()
+    pattern_id = self.buttons[buttonid].options.widget(0).drawingSelect.currentIndex()
+    pattern_name = self.buttons[buttonid].options.widget(0).getPattern(pattern_id)
+    command = ("exec('''" + 
+      f"ButtonHandler.BUTTONS_FALLING_IRQ[{buttonid}] = NeoPixelDesenhos.{pattern_name}\n\r" + 
+      f"ButtonHandler.BUTTONS_RISING_IRQ[{buttonid}] = NeoPixelDesenhos.apaga\n\r" + 
+      f"NeoPixelDesenhos.COLOR = {rgb}\n\r" + 
+      "NeoPixelDesenhos.apaga()\n\r" + 
+      "''')\n\r"
+    )
+    self.ser.write(command.encode())
 
   def sendColorLED(self):
     if self.ser is None:
-      pass
-    else:
-      rgb = self.buttons[
-        self.indices.index(1)
-      ].options.widget(1).RGBSelect.getColor()
-      command = f"LedRGB.COLOR = {rgb}\n\r" + "LedRGB.atualizar()\n\r"
-      self.ser.write(command.encode())
+      return
+    rgb = self.buttons[
+      self.indices.index(1)
+    ].options.widget(1).RGBSelect.getColor()
+    command = ("exec('''" + 
+      f"LedRGB.COLOR = {rgb}\n\r" + 
+      "LedRGB.atualizar()\n\r" + 
+      "''')\n\r"
+    )
+    self.ser.write(command.encode())
 
-  def sendFrequency(self, widgetid):
+  def sendBuzzerFrequency(self, widgetid):
     if self.ser is None:
-      pass
-    else:
-      id = self.indices.index(widgetid)
-      freq = self.buttons[id].options.widget(widgetid).getFrequency()
-      buzzerid = self.buttons[id].options.widget(widgetid).getID()
-      command = f"Buzzer.definirNota({buzzerid}, {freq})\n\r"
-      self.ser.write(command.encode())
+      return
+    id = self.indices.index(widgetid)
+    freq = self.buttons[id].options.widget(widgetid).getFrequency()
+    volume = self.buttons[id].options.widget(widgetid).getVolume()
+    buzzerid = self.buttons[id].options.widget(widgetid).getID()
+    command = ("exec('''" + 
+      # f"Buzzer.definirNota({buzzerid}, {freq})\n\r" + 
+      f"Buzzer.VOLUMES[{buzzerid}] = {volume}\n\r" + 
+      f"Buzzer.BUZZERS[{buzzerid}].freq({freq})\n\r" + 
+      f"Buzzer.atualizar({buzzerid})\n\r" + 
+      "''')\n\r"
+    )
+    self.ser.write(command.encode())
+
+  # def sendBuzzerVolume
+
+  def updateInterrupts(self):
+    for i in range(2):
+      match self.indices[i]:
+        case 0:
+          command = ("exec('''" + 
+            f"ButtonHandler.BUTTONS_RISING_IRQ[{i}] = NeoPixelDesenhos.apaga\n\r" + 
+            "''')\n\r"
+          )
+          self.ser.write(command.encode())
+        case 1:
+          # Update color and both IRQs.
+          command = ("exec('''" + 
+            f"LedRGB.COLOR = {self.buttons[i].options.widget(1).RGBSelect.getColor()}\n\r" + 
+            f"ButtonHandler.BUTTONS_FALLING_IRQ[{i}] = LedRGB.ligar\n\r" + 
+            f"ButtonHandler.BUTTONS_RISING_IRQ[{i}] = LedRGB.desligar\n\r" + 
+            "''')\n\r"
+          )
+          self.ser.write(command.encode())
+        case 2:
+          self.sendBuzzerFrequency(2)
+          command = ("exec('''" + 
+            f"ButtonHandler.BUTTONS_FALLING_IRQ[{i}] = lambda: Buzzer.ligar(0)\n\r" + 
+            f"ButtonHandler.BUTTONS_RISING_IRQ[{i}] = lambda: Buzzer.desligar(0)\n\r" + 
+            "''')\n\r"
+          )
+          self.ser.write(command.encode())
+        case 3:
+          self.sendBuzzerFrequency(3)
+          command = ("exec('''" + 
+            f"ButtonHandler.BUTTONS_FALLING_IRQ[{i}] = lambda: Buzzer.ligar(1)\n\r" + 
+            f"ButtonHandler.BUTTONS_RISING_IRQ[{i}] = lambda: Buzzer.desligar(1)\n\r" + 
+            "''')\n\r"
+          )
+          self.ser.write(command.encode())
 
   def connect(self):
     for p in sorted(serial.tools.list_ports.comports()):
@@ -119,6 +203,8 @@ class Window(BaseWindow):
           command = '\x03exec(\'\'\'' + f.read().replace('\n', '\n\r') + '\'\'\')\n\r'
           self.ser.write(command.encode())
         
+        self.updateInterrupts()
+
         self.label_statusIsConnect.setText("Status: Conectado")
         self.pushButton_connect.setText("Desconectar")
         return

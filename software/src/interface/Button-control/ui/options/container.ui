@@ -86,7 +86,7 @@
     <string>Modo:</string>
    </property>
   </widget>
-  <widget class="QComboBox" name="comboBox">
+  <widget class="QComboBox" name="modeSelect">
    <property name="geometry">
     <rect>
      <x>120</x>

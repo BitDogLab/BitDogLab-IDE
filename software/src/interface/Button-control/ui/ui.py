@@ -9,9 +9,22 @@ class ButtonOptions(QWidget):
     uic.loadUi("./src/interface/Button-control/ui/options/container.ui", self)
 
 class NeoPixelPresets(QWidget):
+  NEOPIXELFUNCTIONS = [
+    "coracao",
+    "coracao_pequeno",
+    "sorriso",
+    "triste",
+    "X",
+    "x",
+    "girafa"
+  ]
+
   def __init__(self, *args, **kwargs):
     super(NeoPixelPresets, self).__init__(*args, **kwargs)
     uic.loadUi("./src/interface/Button-control/ui/options/neopixel_presets.ui", self)
+
+  def getPattern(self, id: int):
+    return self.NEOPIXELFUNCTIONS[id]
 
 class RGBLED(QWidget):
   def __init__(self, *args, **kwargs):
@@ -58,6 +71,9 @@ class Buzzer(QWidget):
 
   def getFrequency(self):
     return self.TONES[self.getPitch()][self.getTone()]
+
+  def getVolume(self):
+    return self.volumeSlider.value()
 
 class BaseWindow(QMainWindow):
   def __init__(self):
