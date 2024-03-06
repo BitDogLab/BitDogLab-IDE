@@ -12,6 +12,11 @@ This project is written in TypeScript and uses npm and Vite to manage
 dependencies and automate the build process. To get started clone the
 repository and install dependencies by running,
 
+1 - clone this repo
+2 - ```sh
+cd ide_v2
+```
+
 ```sh
 npm install
 ```
