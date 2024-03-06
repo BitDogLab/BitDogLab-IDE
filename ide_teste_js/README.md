@@ -1,32 +1,30 @@
-## Enviando comandos via Browser -> USB/Serial - > BitDogLab
+# Serial Terminal
 
-### Para acessar o website com a IDE e testar a comnunicação entre Browser -> BitDogLab, faça:
+This repository contains a Progressive Web App that allows the user to
+communicate with a locally connected serial device through an interactive
+terminal.
 
-#### 1 - Conecte a BitDogLab via USB ou verifique se ela está conectada corretamente:
+This API is available starting with Chrome 89, Edge 89, and Opera 76.
 
-#### 2 - Copie e cole o endereço abaixo no seu seu navegador:
+## Building
 
-```console
-179.235.58.10:8888/bitdoglab/ide/
-```
-#### 3 - Digite o comando mprempte que deseja enviar para a BitDogLab na linha em azul com o numero 1 no inicio;
+This project is written in TypeScript and uses npm and Vite to manage
+dependencies and automate the build process. To get started clone the
+repository and install dependencies by running,
 
-#### 4 - Clique em Connect;
-
-
-### Para ver as versões de teste da página de introdução aos componentes da BitDogLab, acesse o link respectivo:
-
-```console
-179.235.58.10:8888/bitdoglab/v1
+```sh
+npm install
 ```
 
-#### versão mais completa
-```console
-179.235.58.10:8888/bitdoglab/v2
+To create a production build in the `dist` folder run,
+
+```sh
+npm run build
 ```
 
-```console
-179.235.58.10:8888/bitdoglab/v3
-```
+To start a local development server run,
 
+```sh
+npm run dev
+```
 
