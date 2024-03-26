@@ -136,7 +136,7 @@ LedRGB.desligar()
 gc.collect()
 
   # Seção 3: Preparação dos buzzers A e B
-PWM_buzzerA = PWM(Pin(4, Pin.OUT))
+PWM_buzzerA = PWM(Pin(8, Pin.OUT))
 PWM_buzzerA.duty_u16(0)
 PWM_buzzerA.freq(440)
 
