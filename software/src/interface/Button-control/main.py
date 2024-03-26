@@ -111,9 +111,10 @@ class Window(BaseWindow):
       self.updateInterrupts()
 
   def sendNeoPixel(self):
+    # If serial is disconnected, don't do anything.
     if self.ser is None:
-      return
-    buttonid = self.indices.index(0)
+      return  # This can be replaced with a print error message or QMessageBox.
+    buttonid = self.indices.index(0) # Gets button ID from which widget is NeoPixel.
     rgb = self.buttons[buttonid].options.widget(0).RGBSelect.getColor()
     pattern_id = self.buttons[buttonid].options.widget(0).drawingSelect.currentIndex()
     pattern_name = self.buttons[buttonid].options.widget(0).getPattern(pattern_id)
@@ -127,8 +128,9 @@ class Window(BaseWindow):
     self.ser.write(command.encode())
 
   def sendColorLED(self):
+    # If serial is disconnected, don't do anything.
     if self.ser is None:
-      return
+      return  # This can be replaced with a print error message or QMessageBox.
     rgb = self.buttons[
       self.indices.index(1)
     ].options.widget(1).RGBSelect.getColor()
@@ -140,8 +142,9 @@ class Window(BaseWindow):
     self.ser.write(command.encode())
 
   def sendBuzzerFrequency(self, widgetid):
+    # If serial is disconnected, don't do anything.
     if self.ser is None:
-      return
+      return  # This can be replaced with a print error message or QMessageBox.
     id = self.indices.index(widgetid)
     freq = self.buttons[id].options.widget(widgetid).getFrequency()
     volume = self.buttons[id].options.widget(widgetid).getVolume()
@@ -155,18 +158,17 @@ class Window(BaseWindow):
     )
     self.ser.write(command.encode())
 
-  # def sendBuzzerVolume
-
   def updateInterrupts(self):
+    # Updates interrupts in acoordance with the currently selected widgets.
     for i in range(2):
       match self.indices[i]:
-        case 0:
+        case 0: # If the NeoPixel widget is open...
           command = ("exec('''" + 
             f"ButtonHandler.BUTTONS_RISING_IRQ[{i}] = NeoPixelDesenhos.apaga\n\r" + 
             "''')\n\r"
           )
           self.ser.write(command.encode())
-        case 1:
+        case 1: # If the RGB LED widget is open...
           # Update color and both IRQs.
           command = ("exec('''" + 
             f"LedRGB.COLOR = {self.buttons[i].options.widget(1).RGBSelect.getColor()}\n\r" + 
@@ -175,7 +177,7 @@ class Window(BaseWindow):
             "''')\n\r"
           )
           self.ser.write(command.encode())
-        case 2:
+        case 2: # If the Buzzer A widget is open...
           self.sendBuzzerFrequency(2)
           command = ("exec('''" + 
             f"ButtonHandler.BUTTONS_FALLING_IRQ[{i}] = lambda: Buzzer.ligar(0)\n\r" + 
@@ -183,7 +185,7 @@ class Window(BaseWindow):
             "''')\n\r"
           )
           self.ser.write(command.encode())
-        case 3:
+        case 3: # If the Buzzer B widget is open...
           self.sendBuzzerFrequency(3)
           command = ("exec('''" + 
             f"ButtonHandler.BUTTONS_FALLING_IRQ[{i}] = lambda: Buzzer.ligar(1)\n\r" + 
@@ -193,6 +195,7 @@ class Window(BaseWindow):
           self.ser.write(command.encode())
 
   def connect(self):
+    # Checks all available ports. If one is serial-compatible, open it and begin communication.
     for p in sorted(serial.tools.list_ports.comports()):
       if p.vid is not None and p.pid is not None:
         self.ser = serial.Serial(port=p.device, baudrate=115200)
@@ -203,6 +206,7 @@ class Window(BaseWindow):
           command = '\x03exec(\'\'\'' + f.read().replace('\n', '\n\r') + '\'\'\')\n\r'
           self.ser.write(command.encode())
         
+        # Update interrupts via serial
         self.updateInterrupts()
 
         self.label_statusIsConnect.setText("Status: Conectado")
