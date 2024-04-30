@@ -7,6 +7,8 @@ class BaseWindow(QMainWindow):
   def __init__(self):
     super(BaseWindow, self).__init__()
 
+    uic.loadUi("./src/interface/OLED-control/ui/main.ui", self)
+
 if __name__=="__main__":
   app = QApplication(sys.argv)
   window = BaseWindow()
