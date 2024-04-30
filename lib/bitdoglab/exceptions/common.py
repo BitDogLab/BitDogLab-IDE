@@ -1,0 +1,1 @@
+class IllegalArgumentsError(Exception): ... # Function arguments are invalid for given function.
