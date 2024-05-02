@@ -12,7 +12,7 @@ class Led(BaseComponent):
     cor(*args): Controls the color of the RGB LED.
   """
 
-  # Declaração de variáveis dos pinos e dicionário de cores.
+  # Pins and constant variables.
   __pin_R = PWM(Pin(12), freq=500)
   __pin_G = PWM(Pin(11), freq=500)
   __pin_B = PWM(Pin(13), freq=500)
@@ -53,16 +53,16 @@ class Led(BaseComponent):
       IllegalArgumentsError
       
     """
-    if len(args) == 1 and isinstance(args[0], str):
+    if len(args) == 1 and isinstance(args[0], str): # 1. String with desired color name
       rgb = cls.__CORES[args[0]]
       cls.__pin_R.duty_u16(rgb[0])
       cls.__pin_G.duty_u16(rgb[1])
       cls.__pin_B.duty_u16(rgb[2])
-    elif len(args) == 1 and isinstance(args[0], (list, tuple)) and len(args[0]) == 3:
+    elif len(args) == 1 and isinstance(args[0], (list, tuple)) and len(args[0]) == 3: # 2. Tuple/list of 3 ints representing 48-bit RGB color code
       cls.__pin_R.duty_u16(args[0][0])
       cls.__pin_G.duty_u16(args[0][1])
       cls.__pin_B.duty_u16(args[0][2])
-    elif len(args) == 3 and isinstance(args[0], int) and isinstance(args[1], int) and isinstance(args[2], int):
+    elif len(args) == 3 and isinstance(args[0], int) and isinstance(args[1], int) and isinstance(args[2], int): # 3. 3 ints representing 48-bit RGB color code
       cls.__pin_R.duty_u16(args[0])
       cls.__pin_G.duty_u16(args[1])
       cls.__pin_B.duty_u16(args[2])
@@ -71,18 +71,19 @@ class Led(BaseComponent):
       tb = sys.exc_info()[-1]
       stk = traceback.extrack_tb(tb, 1)
       fname = stk[0][2]
+      traceback.print_tb(stk)
       raise IllegalArgumentsError("Function \"", fname, "\" accepts string, tuple/list of 3 ints, or 3 ints. Illegal arguments \"", *args, "\" were used instead.")
 
 def demo():
   """Demonstration of Led class methods."""
-  Led.limpar()
+  Led.limpar() # Switches LED off.
   sleep_ms(1000)
-  Led.cor("vermelho")
+  Led.cor("vermelho") # Makes LED red.
   sleep_ms(500)
-  Led.cor("verde")
+  Led.cor("verde") # Makes LED green.
   sleep_ms(500)
-  Led.cor("azul")
+  Led.cor("azul") # Makes LED blue.
   sleep_ms(500)
-  Led.cor("branco")
+  Led.cor("branco") # Makes LED white.
   sleep_ms(1000)
-  Led.limpar()
+  Led.limpar() # Finally, switches LED off.
