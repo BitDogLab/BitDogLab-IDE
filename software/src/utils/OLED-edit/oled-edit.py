@@ -26,6 +26,8 @@ class OLEDEdit(QWidget):
     self.__is_adjusting_text_flag = True
 
     content = self.__lines[id].toPlainText()[0:17]
+    if len(content) > 16:
+      content = content[0:16]
     
     if "\n" in content:
       index = content.find("\n")
