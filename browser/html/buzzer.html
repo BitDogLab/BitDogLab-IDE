@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BitDogLab - Interfaces: Buzzers</title>
+  <style>
+.piano-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.piano-keys-list {
+  border-radius: 1rem;
+  background-color: gray;
+  list-style: none;
+  display: flex;
+  justify-content: center;
+}
+
+.piano-key {
+  width: 5rem;
+  cursor: pointer;
+  position: relative;
+  height: 20rem;
+  border-radius: 10px;
+  border: 1px solid #000;
+  text-align: center;
+  line-height: 36rem;
+  font-size: x-large;
+}
+
+.white-key {
+  background-color: white;
+}
+
+.black-key {
+  width: 2.5rem;
+  height: 13rem;
+  z-index: 2;
+  border-radius: 5px;
+  margin: 0 -1.25rem 0 -1.25rem;
+  background-color: black;
+  color: white;
+  line-height: 23rem;
+  font-size: large;
+}
+  </style>
+</head>
+<body>
+  <a href="../index.html">Voltar</a>
+  <hr>
+
+  <div class="container">
+    <div class="piano-container">
+      <ul class="piano-keys-list">
+        <li class="piano-key white-key" data-list="B3">B3</li>
+        <li class="piano-key white-key" data-list="C4">C4</li>
+        <li class="piano-key black-key" data-list="Cs4">C#4</li>
+        <li class="piano-key white-key" data-list="D4">D4</li>
+        <li class="piano-key black-key" data-list="Ds4">D#4</li>
+        <li class="piano-key white-key" data-list="E4">E4</li>
+        <li class="piano-key white-key" data-list="F4">F4</li>
+        <li class="piano-key black-key" data-list="Fs4">F#4</li>
+        <li class="piano-key white-key" data-list="G4">G4</li>
+        <li class="piano-key black-key" data-list="Gs4">G#4</li>
+        <li class="piano-key white-key" data-list="A4">A4</li>
+        <li class="piano-key black-key" data-list="As4">A#4</li>
+        <li class="piano-key white-key" data-list="B4">B4</li>
+        <li class="piano-key white-key" data-list="C5">C5</li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="../js/serial.js"></script>
+  <script src="../js/buzzer.js"></script>
+</body>
+</html>

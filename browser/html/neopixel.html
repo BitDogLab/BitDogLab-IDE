@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BitDogLab - Interfaces: NeoPixel</title>
+</head>
+<body>
+  <a href="../index.html">Voltar</a>
+  <hr>
+
+  <div>
+    <canvas width="200" height="200" id="npcanvas"></canvas>
+    <div>
+      <input type="color" id="npcolorselect">
+      <input type="range" id="npluminosityselect" min="0" max="255">
+    </div>
+    <button id="npsend">Enviar cor</button>
+  </div>
+
+  <script src="../js/serial.js"></script>
+  <script src="../js/neopixel.js"></script>
+</body>
+</html>
