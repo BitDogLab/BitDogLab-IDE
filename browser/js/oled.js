@@ -11,8 +11,8 @@ var isMouseStartedOnBlack = false;
 
 function drawPixel(event) {
   const bounding = oled_canvas.getBoundingClientRect();
-  const x = 4 * (((event.clientX - bounding.left)/4) >> 0);
-  const y = 4 * (((event.clientY - bounding.top)/4) >> 0);
+  const x = 4 * (((event.clientX - bounding.left - 8)/4) >> 0);
+  const y = 4 * (((event.clientY - bounding.top - 8)/4) >> 0);
   let color;
   if (isMouseStartedOnBlack) {
     color = "#fff";
