@@ -1,110 +1,104 @@
-var serial = {};
+'use strict';
 
-(
-  function() {
-    'use strict';
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
-    serial.getPorts = function() {
-      return navigator.usb.getDevices()
-        .then(devices => {
-          return devices.map(device => new serial.Port(device));
-        });
+var serial = {
+  // Serial port variable.
+  port: null,
+  connected: false,
+
+  // Reader and writer. Built on connect.
+  reader: null,
+  encoder: null,
+  writer: null,
+
+  // Connect and disconnect functions.
+  connect: null,
+  disconnect: null,
+
+  // Read/Write functions.
+  read: null,
+  write: null
+};
+
+const serial_filters = [
+  {usbVendorId: 5, usbProductId: 11914}
+];
+
+// Connect and disconnect functions.
+serial.connect = async () => {
+  // Connect and open port. Log port info.
+  this.port = await navigator.serial.requestPort({ serial_filters });
+  console.log(this.port.getInfo());
+  await this.port.open({ baudRate: 115200 });
+
+  // Reader setup.
+  this.reader = this.port.readable.getReader({ mode: "byob" });
+
+  // Writer setup.
+  this.writer = {
+    encoder: new TextEncoderStream(),
+    writable_closer: null,
+    writer: null
+  };
+  this.writer.writable_closed = this.writer.encoder.readable.pipeTo(
+    this.port.writable
+  );
+  this.writer.writer = this.writer.encoder.writable.getWriter();
+  this.connected = true;
+}
+serial.disconnect = async () => {
+  this.reader.reader.releaseLock();
+  this.port.readable.releaseLock();
+  this.writer.writer.releaseLock();
+  this.port.writable.releaseLock();
+  await this.port.close();
+
+  this.port = null;
+  this.connected = false;
+}
+
+// Read/Write functions.
+serial.read = async (buffer) => { // Reads into buffer.
+  let offset = 0;
+  while (offset < buffer.byteLength) {
+    const { value, done } = await this.reader.read(
+      new Uint8Array(buffer, offset)
+    );
+    if (done) {
+      break;
     }
-
-    serial.requestPort = function() {
-      const filters = [
-        { 'vendorId': 0xCAFE }, // TinyUSB
-        { 'vendorId': 0x239A }, // Adafruit
-        { 'vendorId': 0x2E8A }, // Raspberry Pi
-        { 'vendorId': 0x303A }, // Espressif
-        { 'vendorId': 0x2341 }, // Arduino
-      ];
-      return navigator.usb.requestDevice({ 'filters': filters })
-        .then(
-          device => new serial.Port(device)
-        );
-    };
-
-    serial.Port = function(device) {
-      this.device_ = device;
-      this.interfaceNumber = 0;
-      this.endpointIn = 0;
-      this.endpointOut = 0;
-    };
-
-    serial.Port.prototype.connect = function() {
-      let readLoop = () => {
-        this.device_.transferIn(this.endpointIn, 64)
-          .then(result => {
-            this.onRecieve(result.data);
-            readLoop();
-          }, error => {
-            this.onRecieveError(error);
-          });
-      };
-      return this.device_.open()
-        .then(() => {
-          if (this.device_.configuration === null) {
-            return this.device_.selectConfiguration(1);
-          };
-        }).then(() => {
-          var interfaces = this.device_.configuration.interfaces;
-          interfaces.forEach(element => {
-            element.alternates.forEach(elementalt => {
-              if (elementalt.interfaceClass == 0xFF) {
-                this.interfaceNumber = element.interfaceNumber;
-                elementalt.endpoints.forEach(elementendpoint => {
-                  if (elementendpoint.direction == "out") {
-                    this.endpointOut = elementendpoint.endpointNumber;
-                  }
-                  if (elementendpoint.direction == "in") {
-                    this.endpointIn = elementendpoint.endpointNumber;
-                  }
-                })
-              }
-            })
-          })
-        }).then(() => {
-          readLoop();
-        });
-    };
-
-    serial.Port.prototype.disconnect = function() {
-      return this.device_.controlTransferOut({
-        'requestType': 'class',
-        'recipient': 'interface',
-        'request': 0x22,
-        'value': 0x00,
-        'index': this.interfaceNumber
-      }).then(() => this.device_.close());
-    };
+    buffer = value.buffer;
+    offset += value.byteLength;
   }
-)();
+  return buffer;
+}
+serial.write = async (text) => {
+  await this.writer.writer.write(text);
+}
 
-let port;
+var status_display = document.getElementById("serialconnectstatus");
+var connect_button = document.getElementById("serialconnectbutton");
+var is_connected = false;
+var serial_setup_str = "\r\n";
 
-function connect() {
-  port.connect().then(() => {
-    port.onRecieve = data => {
-      let decoder = new TextDecoder();
-      console.log(textDecoder.decode(data));
-    };
-    port.onRecieveError = error => {
+connect_button.addEventListener("click", async () => {
+  if (!(serial.connected)) {
+    try {
+      await serial.connect();
+    } catch (error) {
       console.error(error);
-    };
-  });
-}
-
-function startup() {
-  serial.getPorts().then(ports => {
-    if (ports.length === 0) {
-      console.error("No device found.");
-    } else {
-      console.log("Device found!");
-      port = ports[0];
-      connect();
+      return;
     }
-  });
-}
-
-window.addEventListener("load", startup);
+    console.log("Success!");
+    status_display.textContent = "Conectado";
+    connect_button.textContent = "Desconectar";
+    await serial.write(serial_setup_str);
+  } else {
+    await serial.disconnect();
+    status_display.textContent = "Desconectado";
+    connect_button.textContent = "Conectar";
+  }
+});
