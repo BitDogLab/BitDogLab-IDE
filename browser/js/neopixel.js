@@ -56,21 +56,20 @@ function inRange(min, max) {
 
 function drawPixel(event) {
   const bounding = npCanvas.getBoundingClientRect();
-  const x = event.clientX - bounding.left;
-  const y = event.clientY - bounding.top;
+  const x = event.clientX - bounding.left - 8;
+  const y = event.clientY - bounding.top - 8;
   const pixel_x = (x/40) | 0;
   const pixel_y = (y/40) | 0;
   
   if (inRange(0, 4)(pixel_x) && inRange(0, 4)(pixel_y)) {
     const color = npColor.value;
-    const luminosityRatio = npLuminosity.value/255.0;
     npCtx.fillStyle = color;
     npCtx.fillRect(40 * pixel_x, 40 * pixel_y, 40, 40);
 
     var colorList = [
-      Math.round(parseInt(color.substr(1, 2), 16) * luminosityRatio),
-      Math.round(parseInt(color.substr(3, 2), 16) * luminosityRatio),
-      Math.round(parseInt(color.substr(5, 2), 16) * luminosityRatio)
+      Math.round(parseInt(color.substr(1, 2), 16)),
+      Math.round(parseInt(color.substr(3, 2), 16)),
+      Math.round(parseInt(color.substr(5, 2), 16))
     ];
 
     npColorList[4 - pixel_y][pixel_x] = colorList;
@@ -101,8 +100,10 @@ npSend.addEventListener("click", async (event) => {
   // });
   // colors_str = colors_str.slice(0, -1) + "]";
   // console.log(colors_str);
+  const luminosityRatio = npLuminosity.value/255.0;
   npColorList.forEach(async (row, y, array_y) => {
-    row.forEach(async (color, x, array_x) => {
+    row.forEach(async (color_raw, x, array_x) => {
+      const color = [color_raw[0] * luminosityRatio, color_raw[1] * luminosityRatio, color_raw[2] * luminosityRatio]
       console.log(x, y, `${color}`);
       await serial.write(`\rsetLED((${x}, ${y}), (${color}))\r`);
     });
