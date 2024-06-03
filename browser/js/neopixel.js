@@ -48,12 +48,6 @@ var npColorList = [
 npCtx.fillStyle = npColor.value;
 npCtx.fillRect(0, 0, 200, 200);
 
-function inRange(min, max) {
-  return (value) => {
-    return ((value - min) * (value - max)) <= 0;
-  }
-}
-
 function drawPixel(event) {
   const bounding = npCanvas.getBoundingClientRect();
   const x = event.clientX - bounding.left - 8;
