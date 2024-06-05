@@ -4,22 +4,55 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BitDogLab - Interfaces: Display OLED</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <style>
 .oled-canvas{
-  border: 8px solid gray;
+  border: 8px solid transparent;
+  border-image: linear-gradient(to bottom right, #ff0000 0%, #ff7f00 17%, #ffff00 33%, #00ff00 50%, #0000ff 67%, #4b0082 83%, #9400d3 100%);
+  border-image-slice: 1;
+}
+
+.controls {
+  font-size: 20px;
+}
+
+#color-button {
+  background-color: white;
+  font-size: 16px;
 }
   </style>
 </head>
 <body>
-  <a href="../index.html">Voltar</a>
+  <div class="header">
+    <a href="../index.html">Voltar</a>
+    | Status: <a id="serialconnectstatus">Desconectado</a> |
+    <button id="serialconnectbutton">Conectar</button>
+  </div>
   <hr>
 
   <div class="container">
     <canvas class="oled-canvas" width="512" height="256"></canvas>
     <br>
-    <button>Enviar</button>
+    <a class="controls controls-section">
+      <span>
+        Color: <button class="controls" id="color-button">&nbsp;</button>
+      </span>
+      |
+      <span>
+        <button class="controls fa fa-pencil" id="pencil-button"></button>
+        <button class="controls fa fa-minus" id="line-button"></button>
+        <button class="controls fa fa-square-o" id="rect-button"></button>
+        <button class="controls fa fa-square" id="fillrect-button"></button>
+        <button class="controls fa fa-circle-o" id="ellipse-button"></button>
+        <button class="controls fa fa-circle" id="fillellipse-button"></button>
+        <button class="controls fa fa-trash" id="fill-button"></button>
+      </span>
+      |
+      <button class="controls" id="send-button">Enviar</button>
+    </a>
   </div>
 
+  <script src="../js/utils.js"></script>
   <script src="../js/serial.js"></script>
   <script src="../js/oled.js"></script>
 </body>
