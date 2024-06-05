@@ -182,7 +182,11 @@ OLED.renderFBuf = function () {
 
 var Controls = {
   Color: {
-    element: document.querySelector("#color-button")
+    element: document.querySelector("#color-button"),
+    switch: () => {
+      Controls.Color.element.style.backgroundColor = (State.color == 1)?("black"):("white");
+      State.color = 1 - State.color;
+    }
   },
   Pencil: {
     element: document.querySelector("#pencil-button"),
@@ -334,8 +338,7 @@ OLED.getMousePixel = function (event) {
 
 (() => {
   Controls.Color.element.addEventListener("click", () => {
-    Controls.Color.element.style.backgroundColor = (State.color == 1)?("black"):("white");
-    State.color = 1 - State.color;
+    Controls.Color.switch();
   });
 
   Controls.Pencil.element.addEventListener("click", (e) => {
@@ -385,6 +388,11 @@ OLED.getMousePixel = function (event) {
     OLED.renderFBuf();
   });
 })();
+
+document.addEventListener("keydown", (e) => {
+  if (e.key == 'x')
+    Controls.Color.switch();
+})
 
 document.addEventListener("mousedown", (e) => {
   State.is_mousedown = true;
