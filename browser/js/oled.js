@@ -1,6 +1,6 @@
 "use strict";
 
-serial_setup_str = `\x03exec("""\r
+serial_setup_str = `\x03\r
 from machine import Pin, Soft12C\r
 import ssd1306\r
 import framebuf\r
@@ -9,7 +9,7 @@ i2c = SoftI2C(scl=Pin(15), sda=Pin(14))\r
 oled = ssd1306.SSD1306_I2C(128, 64, i2c)\r
 oled.fill(0)\r
 oled.show()\r
-""")\r`;
+`;
 
 var State = {
   is_mousedown: false,
@@ -120,14 +120,39 @@ OLED.FBuf.format = {}; // Format base functions.
     // console.log(`Threshold (half_rxry): `, half_rxry);
     const rx2ry2 = rxry ** 2;
     const ellipseParametric = (x, y) => {return (ry2*(x**2) + rx2*(y**2) - rx2ry2);}
-    
-    // let para_array = [];
+    const threshold = (value) => {return value >= 0;};
+
+    // Looking from infinity on x. First calculations of parametric equation.
+    let para_array = [];
     for (let y = 0; y <= radiusy; ++y) {
-      // para_array.push([]);
+      para_array.push([]);
+      let found_border = false;
       for (let x = 0; x <= radiusx; ++x) {
         const result = ellipseParametric(x, y);
-        // para_array[y].push(result);
-        if (result < rxry) {
+        para_array[y].push(result);
+        if (!found_border && threshold(result)) {
+          this.pixel(fbuf, centerx - x, centery - y, value);
+          this.pixel(fbuf, centerx + x, centery - y, value);
+          this.pixel(fbuf, centerx - x, centery + y, value);
+          this.pixel(fbuf, centerx + x, centery + y, value);
+          found_border = true;
+        }
+      }
+    }
+
+    // Looking from infinity on y.
+    for (let x = 0; x <= radiusx; ++x) {
+      let found_border = false;
+      for (let y = 0; y <= radiusy; ++y) {
+        const result = para_array[y][x];
+        if (!found_border && threshold(result)) {
+          this.pixel(fbuf, centerx - x, centery - y, value);
+          this.pixel(fbuf, centerx + x, centery - y, value);
+          this.pixel(fbuf, centerx - x, centery + y, value);
+          this.pixel(fbuf, centerx + x, centery + y, value);
+          found_border = true;
+        }
+        if (fill && result <= 0) {
           this.pixel(fbuf, centerx - x, centery - y, value);
           this.pixel(fbuf, centerx + x, centery - y, value);
           this.pixel(fbuf, centerx - x, centery + y, value);
@@ -135,8 +160,9 @@ OLED.FBuf.format = {}; // Format base functions.
         }
       }
     }
-    // console.log(para_array);
-    if (!fill) this.ellipse(fbuf, centerx, centery, radiusx - 1, radiusy - 1, 1 - value, true);
+
+    console.log(para_array);
+    // if (!fill) this.ellipse(fbuf, centerx, centery, radiusx - 1, radiusy - 1, 1 - value, true);
   }
 
   f.fill = function (fbuf, value) {
@@ -419,3 +445,13 @@ OLED.canvas.addEventListener("mouseup", (e) => {
 });
 
 OLED.renderFBuf();
+
+Controls.Send.element.addEventListener("click", async (e) => {
+  let bytearray = `${OLED.FBuf.__buf}`
+  await serial.write(`\r
+arr = bytearray([${bytearray}])\r
+fbuf = framebuf.FrameBuffer(arr, 128, 64, framebuf.MONO_VLSB)\r
+oled.blit(fbuf, 0, 0)\r
+oled.show()\r
+`);
+});
