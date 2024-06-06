@@ -76,7 +76,12 @@ serial.read = async (buffer) => { // Reads into buffer.
   return buffer;
 }
 serial.write = async (text) => {
-  await this.writer.writer.write(text);
+  let str = text.slice(0, 64), next = text.slice(64);
+  while (str.length > 0) {
+    await this.writer.writer.write(str);
+    str = next.slice(0, 64);
+    next = next.slice(64);
+  }
 }
 
 var status_display = document.getElementById("serialconnectstatus");
