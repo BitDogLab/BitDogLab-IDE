@@ -221,12 +221,15 @@ var Controls = {
         console.log("Controls.Pencil mousedown handle called!")
         // Do nothing.
       },
-      mousemove: (event) => {
-        // 
+      mousemove: async (event) => {
         if (State.is_mousedown_canvas == false) return;
         let [x, y] = OLED.getMousePixel(event);
-        OLED.FBuf.format.pixel(OLED.FBuf, x, y, State.color);
-        OLED.renderPixel(x, y);
+        let color = OLED.FBuf.format.pixel(OLED.FBuf, x, y);
+        if (color != State.color) {
+          OLED.FBuf.format.pixel(OLED.FBuf, x, y, State.color);
+          OLED.renderPixel(x, y);
+          await serial.write(`\roled.pixel(${x}, ${y}, ${State.color})\r`);
+        }
       },
       mouseup: (event) => {
         console.log("Controls.Pencil mouseup handle called!")
@@ -244,12 +247,15 @@ var Controls = {
       mousemove: (event) => {
         // Do nothing.
       },
-      mouseup: (event) => {
+      mouseup: async (event) => {
         console.log("Controls.Line mouseup handle called!")
         State.mouseup_pixel = OLED.getMousePixel(event);
-        OLED.FBuf.format.line(OLED.FBuf, State.mousedown_pixel[0], State.mousedown_pixel[1], State.mouseup_pixel[0], State.mouseup_pixel[1], State.color);
+        let [x0, y0] = State.mousedown_pixel;
+        let [x1, y1] = State.mouseup_pixel;
+        OLED.FBuf.format.line(OLED.FBuf, x0, y0, x1, y1, State.color);
         // OLED.renderRegion(State.mousedown_pixel[0], State.mousedown_pixel[1], State.mouseup_pixel[0], State.mouseup_pixel[1]);
         OLED.renderFBuf();
+        await serial.write(`\roled.line(${x0}, ${y0}, ${x1}, ${y1}, ${State.color})\r`);
       },
     }
   },
@@ -261,7 +267,7 @@ var Controls = {
         State.mousedown_pixel = OLED.getMousePixel(event);
       },
       mousemove: (event) => {},
-      mouseup: (event) => {
+      mouseup: async (event) => {
         console.log("Controls.Rect mouseup handle called!")
         State.mouseup_pixel = OLED.getMousePixel(event);
         let x0, y0;
@@ -279,6 +285,7 @@ var Controls = {
         OLED.FBuf.format.rect(OLED.FBuf, x0, y0, dx, dy, State.color, false);
         // OLED.renderRegion(State.mousedown_pixel[0], State.mousedown_pixel[1], State.mouseup_pixel[0], State.mouseup_pixel[1]);
         OLED.renderFBuf();
+        await serial.write(`\roled.rect(${x0}, ${y0}, ${dx}, ${dy}, ${State.color})\r`);
       },
     }
   },
@@ -290,7 +297,7 @@ var Controls = {
         State.mousedown_pixel = OLED.getMousePixel(event);
       },
       mousemove: (event) => {},
-      mouseup: (event) => {
+      mouseup: async (event) => {
         console.log("Controls.FillRect mouseup handle called!")
         State.mouseup_pixel = OLED.getMousePixel(event);
         let x0, y0;
@@ -308,6 +315,7 @@ var Controls = {
         OLED.FBuf.format.fillRect(OLED.FBuf, x0, y0, dx, dy, State.color);
         // OLED.renderRegion(State.mousedown_pixel[0], State.mousedown_pixel[1], State.mouseup_pixel[0], State.mouseup_pixel[1]);
         OLED.renderFBuf();
+        await serial.write(`\roled.fill_rect(${x0}, ${y0}, ${dx}, ${dy}, ${State.color})\r`);
       },
     }
   },
@@ -319,13 +327,14 @@ var Controls = {
         State.mousedown_pixel = OLED.getMousePixel(event);
       },
       mousemove: (event) => {},
-      mouseup: (event) => {
+      mouseup: async (event) => {
         console.log("Controls.Ellipse mouseup handle called!")
         State.mouseup_pixel = OLED.getMousePixel(event);
         let [x0, y0] = State.mousedown_pixel;
         let [rx, ry] = [Math.abs(x0 - State.mouseup_pixel[0]), Math.abs(y0 - State.mouseup_pixel[1])];
         OLED.FBuf.format.ellipse(OLED.FBuf, x0, y0, rx, ry, State.color, false);
         OLED.renderFBuf();
+        await serial.write(`\roled.ellipse(${x0}, ${y0}, ${rx}, ${ry}, ${State.color})\r`);
       },
     }
   },
@@ -337,13 +346,14 @@ var Controls = {
         State.mousedown_pixel = OLED.getMousePixel(event);
       },
       mousemove: (event) => {},
-      mouseup: (event) => {
+      mouseup: async (event) => {
         console.log("Controls.FillEllipse mouseup handle called!")
         State.mouseup_pixel = OLED.getMousePixel(event);
         let [x0, y0] = State.mousedown_pixel;
         let [rx, ry] = [Math.abs(x0 - State.mouseup_pixel[0]), Math.abs(y0 - State.mouseup_pixel[1])];
         OLED.FBuf.format.ellipse(OLED.FBuf, x0, y0, rx, ry, State.color, true);
         OLED.renderFBuf();
+        await serial.write(`\roled.ellipse(${x0}, ${y0}, ${rx}, ${ry}, ${State.color}, True)\r`);
       },
     }
   },
@@ -409,9 +419,10 @@ OLED.getMousePixel = function (event) {
     State.current_handles.mouseup = Controls.FillEllipse.handles.mouseup;
   });
 
-  Controls.Fill.element.addEventListener("click", (e) => {
+  Controls.Fill.element.addEventListener("click", async (e) => {
     OLED.FBuf.format.fill(OLED.FBuf, State.color);
     OLED.renderFBuf();
+    await serial.write(`\roled.fill(${State.color})\r`);
   });
 })();
 
@@ -446,12 +457,18 @@ OLED.canvas.addEventListener("mouseup", (e) => {
 
 OLED.renderFBuf();
 
+serial.onConnect = () => {
+  OLED.FBuf.format.fill(OLED.FBuf, 0);
+  OLED.renderFBuf();
+}
+
 Controls.Send.element.addEventListener("click", async (e) => {
-  let bytearray = `${OLED.FBuf.__buf}`
-  await serial.write(`\r
-arr = bytearray([${bytearray}])\r
-fbuf = framebuf.FrameBuffer(arr, 128, 64, framebuf.MONO_VLSB)\r
-oled.blit(fbuf, 0, 0)\r
-oled.show()\r
-`);
+//   let bytearray = `${OLED.FBuf.__buf}`
+//   await serial.write(`\r
+// arr = bytearray([${bytearray}])\r
+// fbuf = framebuf.FrameBuffer(arr, 128, 64, framebuf.MONO_VLSB)\r
+// oled.blit(fbuf, 0, 0)\r
+// oled.show()\r
+// `);
+  await serial.write(`\roled.show()\r`);
 });

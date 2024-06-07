@@ -18,6 +18,10 @@ var serial = {
   connect: null,
   disconnect: null,
 
+  // On connect and on disconnect functions.
+  onConnect: () => {},
+  onDisconnect: () => {},
+
   // Read/Write functions.
   read: null,
   write: null
@@ -58,10 +62,16 @@ serial.disconnect = async () => {
 
   this.port = null;
   this.connected = false;
+
+  await this.onDisconnect();
 }
 
 // Read/Write functions.
 serial.read = async (buffer) => { // Reads into buffer.
+  if (!this.connected) {
+    console.error("Serial not connected! Can't read!");
+    return;
+  }
   let offset = 0;
   while (offset < buffer.byteLength) {
     const { value, done } = await this.reader.read(
@@ -76,6 +86,10 @@ serial.read = async (buffer) => { // Reads into buffer.
   return buffer;
 }
 serial.write = async (text) => {
+  if (!this.connected) {
+    console.error("Serial not connected! Can't write!");
+    return;
+  }
   let str = text.slice(0, 64), next = text.slice(64);
   while (str.length > 0) {
     await this.writer.writer.write(str);
@@ -101,6 +115,7 @@ connect_button.addEventListener("click", async () => {
     status_display.textContent = "Conectado";
     connect_button.textContent = "Desconectar";
     await serial.write(serial_setup_str);
+    serial.onConnect();
   } else {
     await serial.disconnect();
     status_display.textContent = "Desconectado";
