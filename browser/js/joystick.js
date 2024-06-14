@@ -70,7 +70,7 @@ setInterval(async () => {
   jsCtx.fillStyle = 'black';
   
   // Get data from serial port.
-  long_buffer = await serial.read('\r');
+  long_buffer = await serial.read();
   // if (!long_buffer.includes('\r')) return;
   
   let values = long_buffer.split(' ').map((value) => {return parseInt(value);});

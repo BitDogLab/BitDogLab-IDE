@@ -44,3 +44,10 @@ def setColor(r: int, g: int, b: int):\r\n
   ledColorPicker.value = "#ff0000";
   ledColorPicker.select();
 });
+
+
+
+setInterval(async () => {
+  if (!serialIsConnected) return;
+  console.log(await serial.read());
+});

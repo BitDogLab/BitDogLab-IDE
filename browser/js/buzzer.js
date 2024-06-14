@@ -37,10 +37,10 @@ serial_setup_str = `\x03\r\n
 exec("""\r\n
 from machine import Pin, PWM\r\n
 \r\n
-buzzerA_pin = Pin(4, Pin.OUT)\r\n
+buzzerA_pin = Pin(21, Pin.OUT)\r\n
 buzzerA_pwm = PWM(buzzerA_pin)\r\n
 buzzerA_pwm.duty_u16(0)\r\n
-buzzerB_pin = Pin(21, Pin.OUT)\r\n
+buzzerB_pin = Pin(4, Pin.OUT)\r\n
 buzzerB_pwm = PWM(buzzerB_pin)\r\n
 buzzerB_pwm.duty_u16(0)\r\n
 """)\r\n`;

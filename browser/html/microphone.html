@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BitDogLab - Interfaces: Microfone</title>
+  <style>
+#volume-meter {
+  border: 4px solid transparent;
+  border-image: linear-gradient(to bottom right, #ff0000 0%, #ff7f00 17%, #ffff00 33%, #00ff00 50%, #0000ff 67%, #4b0082 83%, #9400d3 100%);
+  border-image-slice: 1;
+}
+  </style>
+</head>
+<body>
+  <div class="header">
+    <a href="../index.html">Voltar</a>
+    | Status: <a id="serialconnectstatus">Desconectado</a> |
+    <button id="serialconnectbutton">Conectar</button>
+  </div>
+  
+  <hr>
+
+  <div>
+      <canvas id="volume-meter" width="528" height="80"></canvas><br>
+      <button id="record" style="font-size:16pt;">Record</button>
+      <!-- <button id="stop">Stop</button> -->
+      <!-- <button id="play">Play</button> -->
+  </div>
+  <script src="../js/serial.js"></script>
+  <script src="../js/microphone.js"></script>
+</body>
+</html>

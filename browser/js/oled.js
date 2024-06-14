@@ -1,7 +1,7 @@
 "use strict";
 
 serial_setup_str = `\x03\r
-from machine import Pin, Soft12C\r
+from machine import Pin, SoftI2C\r
 import ssd1306\r
 import framebuf\r
 \r
@@ -472,3 +472,8 @@ Controls.Send.element.addEventListener("click", async (e) => {
 // `);
   await serial.write(`\roled.show()\r`);
 });
+
+setInterval(async () => {
+  if (!serialIsConnected) return;
+  console.log(await serial.read());
+}, 50);

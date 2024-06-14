@@ -79,7 +79,7 @@ serial.disconnect = async () => {
 }
 
 // Read/Write functions.
-serial.read = async (length) => { // Reads into buffer string. Returns line.
+serial.read = async () => { // Reads into buffer string. Returns line.
   // let string = '';
   while (!this.reader.buffer.includes('\r')) {
     const { value, done } = await this.reader.reader.read();

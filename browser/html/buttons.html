@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BitDogLab - Interfaces: Botões</title>
+  <style>
+    .button-container {
+      margin: 8pt;
+      background-color: #eeeeee;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <a href="../index.html">Voltar</a>
+    | Status: <a id="serialconnectstatus">Desconectado</a> |
+    <button id="serialconnectbutton">Conectar</button>
+  </div>
+  
+  <hr>
+
+  <div>
+    Botão A
+    <div class="button-container button-a-container">
+      <select id="button-a-select">
+        <option value="neopixel">NeoPixel</option>
+        <option value="rgbled">LED RGB</option>
+        <option value="buzzer_a">Buzzer A</option>
+        <option value="buzzer_b">Buzzer B</option>
+      </select>
+      <span id="button-a-neopixel">
+        <table>
+          <tr>
+            <td><button id="button-a-neopixel-heart">Coração</button></td>
+            <td><button id="button-a-neopixel-smallheart">Coração Pequeno</button></td>
+            <td><button id="button-a-neopixel-smile">Sorriso</button></td>
+          </tr>
+          <tr>
+            <td><button id="button-a-neopixel-sad">Triste</button></td>
+            <td><button id="button-a-neopixel-xbig">X Grande</button></td>
+            <td><button id="button-a-neopixel-xsmall">X Pequeno</button></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><button id="button-a-neopixel-giraffe">Girafa</button></td>
+          </tr>
+        </table>
+        <br>
+        <input type="color" id="button-a-neopixel-color">
+      </span>
+      <span hidden id="button-a-rgbled">
+        <input id="button-a-rgbled-picker" type="color">
+        <button id="button-a-rgbled-send">Enviar cor</button>
+      </span>
+      <span hidden id="button-a-buzzer-a">
+        <input type="range" min="1", max="5000" id="button-a-buzzer-a-freq-slide"> <input type="number" min="1" max="10000" id="button-a-buzzer-a-freq">
+        <br>
+        <input type="range" min="0", max="32767" value="32767" id="button-a-buzzer-a-volume"> Volume: <a id="button-a-buzzer-a-volume-text">100</a>%
+      </span>
+      <span hidden id="button-a-buzzer-b">
+        <input type="range" min="1", max="10000" id="button-a-buzzer-b-freq-slide"> <input type="number" min="1" max="10000" id="button-a-buzzer-b-freq">
+        <br>
+        <input type="range" min="0", max="32767" value="32767" id="button-a-buzzer-b-volume"> Volume: <a id="button-a-buzzer-b-volume-text">100</a>%
+      </span>
+    </div>
+    <hr>
+    Botão B<div class="button-container button-b-container">
+      <select id="button-b-select">
+        <option value="neopixel">NeoPixel</option>
+        <option value="rgbled">LED RGB</option>
+        <option value="buzzer_a">Buzzer A</option>
+        <option value="buzzer_b">Buzzer B</option>
+      </select>
+      <span id="button-b-neopixel">
+        <table>
+          <tr>
+            <td><button id="button-b-neopixel-heart">Coração</button></td>
+            <td><button id="button-b-neopixel-smallheart">Coração Pequeno</button></td>
+            <td><button id="button-b-neopixel-smile">Sorriso</button></td>
+          </tr>
+          <tr>
+            <td><button id="button-b-neopixel-sad">Triste</button></td>
+            <td><button id="button-b-neopixel-xbig">X Grande</button></td>
+            <td><button id="button-b-neopixel-xsmall">X Pequeno</button></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><button id="button-b-neopixel-giraffe">Girafa</button></td>
+          </tr>
+        </table>
+        <br>
+        <input type="color" id="button-b-neopixel-color">
+      </span>
+      <span hidden id="button-b-rgbled">
+        <input id="button-b-rgbled-picker" type="color">
+        <button id="button-b-rgbled-send">Enviar cor</button>
+      </span>
+      <span hidden id="button-b-buzzer-a">
+        <input type="range" min="1", max="5000" id="button-b-buzzer-a-freq-slide"> <input type="number" min="1" max="10000" id="button-b-buzzer-a-freq">
+        <br>
+        <input type="range" min="0", max="32767" value="32767" id="button-b-buzzer-a-volume"> Volume: <a id="button-b-buzzer-a-volume-text">100</a>%
+      </span>
+      <span hidden id="button-b-buzzer-b">
+        <input type="range" min="1", max="10000" id="button-b-buzzer-b-freq-slide"> <input type="number" min="1" max="10000" id="button-b-buzzer-b-freq">
+        <br>
+        <input type="range" min="0", max="32767" value="32767" id="button-b-buzzer-b-volume"> Volume: <a id="button-b-buzzer-b-volume-text">100</a>%
+      </span>
+    </div>
+  </div>
+  <script src="../js/utils.js"></script>
+  <script src="../js/serial.js"></script>
+  <script src="../js/buttons-prepare.js"></script>
+  <script src="../js/buttons.js"></script>
+</body>
+</html>

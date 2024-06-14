@@ -97,7 +97,7 @@ npSend.addEventListener("click", async (event) => {
   const luminosityRatio = npLuminosity.value/255.0;
   npColorList.forEach(async (row, y, array_y) => {
     row.forEach(async (color_raw, x, array_x) => {
-      const color = [color_raw[0] * luminosityRatio, color_raw[1] * luminosityRatio, color_raw[2] * luminosityRatio]
+      const color = [color_raw[0] * luminosityRatio, color_raw[1] * luminosityRatio, color_raw[2] * luminosityRatio].map((value) => {return value >> 0;});
       console.log(x, y, `${color}`);
       await serial.write(`\rsetLED((${x}, ${y}), (${color}))\r`);
     });
@@ -112,4 +112,9 @@ npSend.addEventListener("click", async (event) => {
 // updateLEDs()\r
 // """)\r
   // `);
+});
+
+setInterval(async () => {
+  if (!serialIsConnected) return;
+  console.log(await serial.read(512));
 });
