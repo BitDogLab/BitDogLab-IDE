@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BitDogLab - Interfaces: Joystick</title>
+  <style>
+#joystickcanvas {
+  border: 8px solid transparent;
+  border-image: linear-gradient(to bottom right, #ff0000 0%, #ff7f00 17%, #ffff00 33%, #00ff00 50%, #0000ff 67%, #4b0082 83%, #9400d3 100%);
+  border-image-slice: 1;
+}
+  </style>
+</head>
+<body>
+  <div class="header">
+    <a href="../index.html">Voltar</a>
+    | Status: <a id="serialconnectstatus">Desconectado</a> |
+    <button id="serialconnectbutton">Conectar</button>
+  </div>
+  <hr>
+
+  <div>
+    <canvas width="255" height="255" id="joystickcanvas"></canvas>
+    <div>
+      Posição x: <a id="joystick-xpos"></a><br>
+      Posição y: <a id="joystick-ypos"></a><br>
+      Pressionado?: <a id="joystick-pressed"></a>
+    </div>
+  </div>
+
+  <script src="../js/utils.js"></script>
+  <script src="../js/serial.js"></script>
+  <script src="../js/joystick.js"></script>
+</body>
+</html>

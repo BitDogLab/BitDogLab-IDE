@@ -4,6 +4,7 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+var serialIsConnected = false;
 var serial = {
   // Serial port variable.
   port: null,
@@ -11,7 +12,6 @@ var serial = {
 
   // Reader and writer. Built on connect.
   reader: null,
-  encoder: null,
   writer: null,
 
   // Connect and disconnect functions.
@@ -39,19 +39,30 @@ serial.connect = async () => {
   await this.port.open({ baudRate: 115200 });
 
   // Reader setup.
-  this.reader = this.port.readable.getReader({ mode: "byob" });
+  this.reader = {
+    decoder: new TextDecoderStream(),
+    readable_closed: null,
+    reader: null,
+    buffer: ''
+  };
+  this.reader.readable_closed = this.port.readable.pipeTo(
+    this.reader.decoder.writable
+  );
+  this.reader.reader = this.reader.decoder.readable.getReader();
 
   // Writer setup.
   this.writer = {
     encoder: new TextEncoderStream(),
-    writable_closer: null,
+    writable_closed: null,
     writer: null
   };
   this.writer.writable_closed = this.writer.encoder.readable.pipeTo(
     this.port.writable
   );
   this.writer.writer = this.writer.encoder.writable.getWriter();
+
   this.connected = true;
+  serialIsConnected = true;
 }
 serial.disconnect = async () => {
   this.reader.reader.releaseLock();
@@ -62,29 +73,26 @@ serial.disconnect = async () => {
 
   this.port = null;
   this.connected = false;
+  serialIsConnected = false;
 
   await this.onDisconnect();
 }
 
 // Read/Write functions.
-serial.read = async (buffer) => { // Reads into buffer.
-  if (!this.connected) {
-    console.error("Serial not connected! Can't read!");
-    return;
+serial.read = async (length) => { // Reads into buffer string. Returns line.
+  // let string = '';
+  while (!this.reader.buffer.includes('\r')) {
+    const { value, done } = await this.reader.reader.read();
+    this.reader.buffer += value;
+    if (done) break;
   }
-  let offset = 0;
-  while (offset < buffer.byteLength) {
-    const { value, done } = await this.reader.read(
-      new Uint8Array(buffer, offset)
-    );
-    if (done) {
-      break;
-    }
-    buffer = value.buffer;
-    offset += value.byteLength;
-  }
-  return buffer;
+  let index = this.reader.buffer.indexOf('\r');
+  let output = this.reader.buffer.slice(0, index);
+  this.reader.buffer = this.reader.buffer.slice(index + 1);
+  // console.log(string);
+  return output;
 }
+
 serial.write = async (text) => {
   if (!this.connected) {
     console.error("Serial not connected! Can't write!");
@@ -95,6 +103,7 @@ serial.write = async (text) => {
     await this.writer.writer.write(str);
     str = next.slice(0, 64);
     next = next.slice(64);
+    // sleep(1);
   }
 }
 
