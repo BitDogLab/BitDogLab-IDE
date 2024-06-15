@@ -9,6 +9,7 @@ var serial = {
   // Serial port variable.
   port: null,
   connected: false,
+  isConnected: null,
 
   // Reader and writer. Built on connect.
   reader: null,
@@ -27,14 +28,14 @@ var serial = {
   write: null
 };
 
-const serial_filters = [
+const serial_filters = [ // Doesn't work. When used, no ports are listed.
   {usbVendorId: 5, usbProductId: 11914}
 ];
 
 // Connect and disconnect functions.
 serial.connect = async () => {
   // Connect and open port. Log port info.
-  this.port = await navigator.serial.requestPort({ serial_filters });
+  this.port = await navigator.serial.requestPort();
   console.log(this.port.getInfo());
   await this.port.open({ baudRate: 115200 });
 
@@ -84,7 +85,7 @@ serial.read = async () => { // Reads into buffer string. Returns line.
   while (!this.reader.buffer.includes('\r')) {
     const { value, done } = await this.reader.reader.read();
     this.reader.buffer += value;
-    if (done) break;
+    if (done || value.length == 0) break;
   }
   let index = this.reader.buffer.indexOf('\r');
   let output = this.reader.buffer.slice(0, index);

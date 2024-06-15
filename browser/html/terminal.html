@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <style>
+    .terminal {
+      font-family: monospace;
+      background-color: #000;
+      color: lightgreen;
+      padding: 20px;
+    }
+    .input {
+      margin-top: 10px;
+    }
+    #prompt {
+      font-weight: bold;
+    }
+    #cmd {
+      background: transparent;
+      border: none;
+      color: lightgreen;
+      outline: none;
+    }
+  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BitDogLab - Interfaces: LED RGB</title>
+</head>
+<body>
+  <div class="header">
+    <a href="../index.html">Voltar</a>
+    | Status: <a id="serialconnectstatus">Desconectado</a> |
+    <button id="serialconnectbutton">Conectar</button>
+  </div>
+  
+  <hr>
+
+  <div class="terminal">
+    <div class="output"></div>
+    <hr>
+    <div class="input">
+      <span id="prompt">>>> </span>
+      <input type=text id="cmd" placeholder="Write here...">
+    </div>
+  </div>
+  <script src="../js/serial.js"></script>
+  <script src="../js/terminal.js"></script>
+</body>
+</html>
