@@ -1,10 +1,5 @@
 'use strict';
 
-serial_setup_str = `\x03\r` +
-`with open('demos/buttons.py', 'r') as f:\r` +
-`exec(f.read())\r` +
-`\b\r`;
-
 let ButtonA_Options = document.querySelector('#button-a-select');
 let buttona_last_value = ButtonA_Options.value;
 let ButtonA_Pages = {
