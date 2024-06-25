@@ -1,0 +1,40 @@
+/* Terminal stylesheet */
+.terminal {
+  font-family: monospace;
+  background-color: #000;
+  color: lightgreen;
+  padding: 20px;
+  margin: 10px;
+}
+
+.output {
+  height: 16em;
+  line-height: 1em;
+  max-height: 16em;
+  overflow-y: scroll;
+}
+
+.input {
+  margin-top: 10px;
+}
+
+#prompt {
+  font-weight: bold;
+}
+
+#cmd {
+  width: calc(100% - 31pt);
+  background: transparent;
+  border: none;
+  color: lightgreen;
+  outline: none;
+}
+
+/* Table div stylesheet */
+.row {
+  display: flex;
+}
+
+.column {
+  flex: 50%;
+}
