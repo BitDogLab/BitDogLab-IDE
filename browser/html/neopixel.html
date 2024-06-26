@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BitDogLab - Interfaces: NeoPixel</title>
+  <link rel="stylesheet" type="text/css" href="../css/terminal.css">
   <style>
 #npcanvas {
   border: 8px solid transparent;
@@ -20,17 +21,28 @@
   </div>
   <hr>
 
-  <div>
-    <canvas width="200" height="200" id="npcanvas"></canvas>
-    <div>
-      <input type="color" id="npcolorselect">
-      <input type="range" id="npluminosityselect" min="0" max="255">
+  <div class="row">
+    <div class="column">
+      <canvas width="200" height="200" id="npcanvas"></canvas>
+      <div>
+        <input type="color" id="npcolorselect">
+        <input type="range" id="npluminosityselect" min="0" max="255">
+      </div>
+      <button id="npsend">Enviar cor</button>
     </div>
-    <button id="npsend">Enviar cor</button>
+    <div class="column terminal">
+      <div class="output"></div>
+      <hr>
+      <div class="input">
+        <span id="prompt">>>> </span>
+        <input type=text id="cmd" placeholder="Write here...">
+      </div>
+    </div>
   </div>
 
   <script src="../js/utils.js"></script>
   <script src="../js/serial.js"></script>
+  <script src="../js/terminal.js"></script>
   <script src="../js/neopixel.js"></script>
 </body>
 </html>

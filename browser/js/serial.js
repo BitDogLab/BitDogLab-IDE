@@ -132,3 +132,10 @@ connect_button.addEventListener("click", async () => {
     connect_button.textContent = "Conectar";
   }
 });
+
+window.addEventListener('beforeunload', async () => {
+  if (!serialIsConnected) return;
+  await serial.write(`\x03\r
+from machine import reset\r
+reset()\r`);
+});

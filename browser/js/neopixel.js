@@ -116,5 +116,5 @@ npSend.addEventListener("click", async (event) => {
 
 setInterval(async () => {
   if (!serialIsConnected) return;
-  console.log(await serial.read(512));
-});
+  console.log(await Terminal.readFromSerial(serial));
+}, 10);

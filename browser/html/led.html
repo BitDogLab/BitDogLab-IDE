@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BitDogLab - Interfaces: LED RGB</title>
+  <link rel="stylesheet" type="text/css" href="../css/terminal.css">
 </head>
 <body>
   <div class="header">
@@ -14,11 +15,22 @@
   
   <hr>
 
-  <div>
-    <input id="ledcolorpicker" type="color">
-    <button id="ledcolorsend">Enviar cor</button>
+  <div class="row">
+    <div class="column left-column">
+      <input id="ledcolorpicker" type="color">
+      <button id="ledcolorsend">Enviar cor</button>
+    </div>
+    <div class="column terminal">
+      <div class="output"></div>
+      <hr>
+      <div class="input">
+        <span id="prompt">>>> </span>
+        <input type=text id="cmd" placeholder="Write here...">
+      </div>
+    </div>
   </div>
   <script src="../js/serial.js"></script>
+  <script src="../js/terminal.js"></script>
   <script src="../js/led.js"></script>
 </body>
 </html>

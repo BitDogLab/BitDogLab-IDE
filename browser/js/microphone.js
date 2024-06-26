@@ -61,11 +61,12 @@ Mic.Controls.record.addEventListener('click', (e) => {
 let long_buffer = '';
 const token = '\r';
 setInterval(async () => {
-  if (!serialIsConnected || !Mic.is_recording) return;
+  if (!serialIsConnected) return;
   
   // Get data from serial port.
-  long_buffer = await serial.read();
+  long_buffer = await Terminal.readFromSerial(serial);
   console.log(long_buffer);
+  if (!Mic.is_recording) return;
   let volume = 2 * Math.abs(parseInt(long_buffer) - 32768);
   Mic.Volume.set(volume);
 }, 5);

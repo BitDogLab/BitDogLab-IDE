@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BitDogLab - Interfaces: Joystick</title>
+  <link rel="stylesheet" type="text/css" href="../css/terminal.css">
   <style>
 #joystickcanvas {
   border: 8px solid transparent;
@@ -20,17 +21,29 @@
   </div>
   <hr>
 
-  <div>
-    <canvas width="255" height="255" id="joystickcanvas"></canvas>
-    <div>
-      Posição x: <a id="joystick-xpos"></a><br>
-      Posição y: <a id="joystick-ypos"></a><br>
-      Pressionado?: <a id="joystick-pressed"></a>
+  <div class="row">
+    <div class="column">
+      <canvas width="255" height="255" id="joystickcanvas"></canvas>
+      <div>
+        Posição x: <a id="joystick-xpos"></a><br>
+        Posição y: <a id="joystick-ypos"></a><br>
+        Pressionado?: <a id="joystick-pressed"></a>
+      </div>
+    </div>
+    <div class="column terminal">
+      <div class="output"></div>
+      <hr>
+      <div class="input">
+        <span id="prompt">>>> </span>
+        <input type=text id="cmd" placeholder="Write here...">
+      </div>
     </div>
   </div>
 
+
   <script src="../js/utils.js"></script>
   <script src="../js/serial.js"></script>
+  <script src="../js/terminal.js"></script>
   <script src="../js/joystick.js"></script>
 </body>
 </html>

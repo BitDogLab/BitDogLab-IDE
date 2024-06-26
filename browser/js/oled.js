@@ -475,5 +475,5 @@ Controls.Send.element.addEventListener("click", async (e) => {
 
 setInterval(async () => {
   if (!serialIsConnected) return;
-  console.log(await serial.read());
-}, 50);
+  console.log(await Terminal.readFromSerial(serial));
+}, 10);

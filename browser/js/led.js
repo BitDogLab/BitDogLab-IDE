@@ -1,7 +1,6 @@
 'use strict';
 
 var ledColorPicker = document.querySelector("input");
-// import { serial } from "./serial.js";
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -49,5 +48,5 @@ def setColor(r: int, g: int, b: int):\r\n
 
 setInterval(async () => {
   if (!serialIsConnected) return;
-  console.log(await serial.read());
-});
+  console.log(await Terminal.readFromSerial(serial));
+}, 10);

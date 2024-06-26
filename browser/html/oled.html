@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BitDogLab - Interfaces: Display OLED</title>
+  <link rel="stylesheet" type="text/css" href="../css/terminal.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <style>
 .oled-canvas{
@@ -52,8 +53,20 @@
     </a>
   </div>
 
+  <hr>
+  
+  <div class="terminal">
+    <div class="output"></div>
+    <hr>
+    <div class="input">
+      <span id="prompt">>>> </span>
+      <input type=text id="cmd" placeholder="Write here...">
+    </div>
+  </div>
+
   <script src="../js/utils.js"></script>
   <script src="../js/serial.js"></script>
+  <script src="../js/terminal.js"></script>
   <script src="../js/oled.js"></script>
 </body>
 </html>

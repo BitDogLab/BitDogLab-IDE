@@ -8,9 +8,14 @@ var Terminal = {
   selected_input: 0,
   output: document.querySelector('.output'),
   lines: 0,
-  MAX_LINES: 64,
+  MAX_LINES: 256,
 
-  addLine: function (text) {
+  addLine: function (text_) {
+    let text = text_;
+    // while (text.includes('    \b')) {
+    //   text = text.replaceAll('    \b', '');
+    // }
+    text = text.replaceAll(' ', '\xa0');
     let new_line = document.createElement('div');
     new_line.className = 'line';
     let text_node = document.createTextNode(text);

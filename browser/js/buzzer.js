@@ -79,3 +79,8 @@ document.addEventListener("keyup", async (event) => {
 buzzerA_pwm.duty_u16(0)\r\n
   `);
 });
+
+setInterval(async () => {
+  if (!serialIsConnected) return;
+  console.log(await Terminal.readFromSerial(serial));
+}, 10);

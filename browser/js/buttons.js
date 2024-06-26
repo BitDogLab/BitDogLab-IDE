@@ -306,5 +306,5 @@ ButtonB_Options.addEventListener('change', changeButtonB);
 
 setInterval(async () => {
   if (!serialIsConnected) return;
-  console.log(await serial.read());
-}, 1000);
+  console.log(await Terminal.readFromSerial(serial));
+}, 10);
